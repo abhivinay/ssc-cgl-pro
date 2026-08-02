@@ -1,0 +1,234 @@
+{
+  "source": "PYQS\\2019\\3-3\\3_march_shift_2_copy\\page-001.png",
+  "width": 1400,
+  "height": 1979,
+  "horizontalLines": [
+    {
+      "y": 143,
+      "startY": 141,
+      "endY": 144,
+      "thickness": 4,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 177,
+      "startY": 175,
+      "endY": 179,
+      "thickness": 5,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 211,
+      "startY": 209,
+      "endY": 213,
+      "thickness": 5,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 246,
+      "startY": 244,
+      "endY": 247,
+      "thickness": 4,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 280,
+      "startY": 278,
+      "endY": 281,
+      "thickness": 4,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 314,
+      "startY": 312,
+      "endY": 316,
+      "thickness": 5,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 348,
+      "startY": 346,
+      "endY": 350,
+      "thickness": 5,
+      "xStart": 104,
+      "xEnd": 880,
+      "width": 777
+    },
+    {
+      "y": 387,
+      "startY": 386,
+      "endY": 388,
+      "thickness": 3,
+      "xStart": 84,
+      "xEnd": 1320,
+      "width": 1237
+    },
+    {
+      "y": 447,
+      "startY": 446,
+      "endY": 447,
+      "thickness": 2,
+      "xStart": 103,
+      "xEnd": 1301,
+      "width": 1199
+    },
+    {
+      "y": 929,
+      "startY": 928,
+      "endY": 929,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 1034,
+      "startY": 1033,
+      "endY": 1035,
+      "thickness": 3,
+      "xStart": 769,
+      "xEnd": 1278,
+      "width": 510
+    },
+    {
+      "y": 1048,
+      "startY": 1046,
+      "endY": 1050,
+      "thickness": 5,
+      "xStart": 103,
+      "xEnd": 1301,
+      "width": 1199
+    },
+    {
+      "y": 1073,
+      "startY": 1071,
+      "endY": 1075,
+      "thickness": 5,
+      "xStart": 171,
+      "xEnd": 722,
+      "width": 552
+    },
+    {
+      "y": 1094,
+      "startY": 1094,
+      "endY": 1094,
+      "thickness": 1,
+      "xStart": 170,
+      "xEnd": 928,
+      "width": 759
+    },
+    {
+      "y": 1308,
+      "startY": 1307,
+      "endY": 1308,
+      "thickness": 2,
+      "xStart": 769,
+      "xEnd": 1279,
+      "width": 511
+    },
+    {
+      "y": 1414,
+      "startY": 1413,
+      "endY": 1414,
+      "thickness": 2,
+      "xStart": 769,
+      "xEnd": 1278,
+      "width": 510
+    },
+    {
+      "y": 1426,
+      "startY": 1425,
+      "endY": 1426,
+      "thickness": 2,
+      "xStart": 103,
+      "xEnd": 1301,
+      "width": 1199
+    }
+  ],
+  "candidateRegions": [
+    {
+      "top": 143,
+      "bottom": 246,
+      "left": 104,
+      "right": 880,
+      "width": 776,
+      "height": 103
+    },
+    {
+      "top": 177,
+      "bottom": 280,
+      "left": 104,
+      "right": 880,
+      "width": 776,
+      "height": 103
+    },
+    {
+      "top": 211,
+      "bottom": 314,
+      "left": 104,
+      "right": 880,
+      "width": 776,
+      "height": 103
+    },
+    {
+      "top": 246,
+      "bottom": 348,
+      "left": 104,
+      "right": 880,
+      "width": 776,
+      "height": 102
+    },
+    {
+      "top": 387,
+      "bottom": 1048,
+      "left": 84,
+      "right": 1320,
+      "width": 1236,
+      "height": 661
+    },
+    {
+      "top": 929,
+      "bottom": 1034,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 105
+    },
+    {
+      "top": 1034,
+      "bottom": 1308,
+      "left": 769,
+      "right": 1279,
+      "width": 510,
+      "height": 274
+    },
+    {
+      "top": 1048,
+      "bottom": 1426,
+      "left": 103,
+      "right": 1301,
+      "width": 1198,
+      "height": 378
+    },
+    {
+      "top": 1308,
+      "bottom": 1414,
+      "left": 769,
+      "right": 1279,
+      "width": 510,
+      "height": 106
+    }
+  ]
+}

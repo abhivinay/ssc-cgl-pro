@@ -1,0 +1,336 @@
+const percentageTopicTest=[
+{
+id:"percentage-test-1",
+topicId:"quant-percentage",
+subtopic:"Fraction to Percentage",
+difficulty:"easy",
+type:"mcq",
+question:"Convert 7/20 into a percentage.",
+options:["30%","35%","40%","45%"],
+answer:1,
+explanation:"7/20 × 100 = 35%.",
+shortcut:"1/20 = 5%, so 7/20 = 35%.",
+timeLimit:30
+},
+{
+id:"percentage-test-2",
+topicId:"quant-percentage",
+subtopic:"Percentage of Quantity",
+difficulty:"easy",
+type:"mcq",
+question:"Find 37.5% of 320.",
+options:["100","110","120","140"],
+answer:2,
+explanation:"37.5% = 3/8. Therefore, 320 × 3/8 = 120.",
+shortcut:"Use 37.5% = 3/8.",
+timeLimit:40
+},
+{
+id:"percentage-test-3",
+topicId:"quant-percentage",
+subtopic:"Percentage Comparison",
+difficulty:"easy",
+type:"mcq",
+question:"45 is what percent of 180?",
+options:["20%","25%","30%","35%"],
+answer:1,
+explanation:"45/180 × 100 = 25%.",
+timeLimit:35
+},
+{
+id:"percentage-test-4",
+topicId:"quant-percentage",
+subtopic:"Reverse Percentage",
+difficulty:"medium",
+type:"mcq",
+question:"After increasing by 15%, a number becomes 690. Find the original number.",
+options:["580","590","600","620"],
+answer:2,
+explanation:"Original = 690 × 100/115 = 600.",
+timeLimit:50
+},
+{
+id:"percentage-test-5",
+topicId:"quant-percentage",
+subtopic:"Percentage Increase",
+difficulty:"easy",
+type:"mcq",
+question:"The price of an article rises from ₹640 to ₹800. Find the percentage increase.",
+options:["20%","25%","30%","35%"],
+answer:1,
+explanation:"Increase = 160. Percentage increase = 160/640 × 100 = 25%.",
+commonMistake:"Using ₹800 as the denominator.",
+timeLimit:45
+},
+{
+id:"percentage-test-6",
+topicId:"quant-percentage",
+subtopic:"Percentage Decrease",
+difficulty:"easy",
+type:"mcq",
+question:"A number decreases from 900 to 720. Find the percentage decrease.",
+options:["15%","18%","20%","25%"],
+answer:2,
+explanation:"Decrease = 180. Percentage decrease = 180/900 × 100 = 20%.",
+timeLimit:45
+},
+{
+id:"percentage-test-7",
+topicId:"quant-percentage",
+subtopic:"Successive Percentage Change",
+difficulty:"medium",
+type:"mcq",
+question:"A quantity is increased by 20% and then decreased by 15%. Find the net change.",
+options:["2% increase","2% decrease","5% increase","5% decrease"],
+answer:0,
+explanation:"Net change = 20−15−20×15/100 = 5−3 = 2% increase.",
+shortcut:"1.20 × 0.85 = 1.02.",
+timeLimit:55
+},
+{
+id:"percentage-test-8",
+topicId:"quant-percentage",
+subtopic:"Equal Increase and Decrease",
+difficulty:"medium",
+type:"mcq",
+question:"A value is increased by 35% and then decreased by 35%. Find the net percentage change.",
+options:["10.25% decrease","12.25% decrease","12.25% increase","No change"],
+answer:1,
+explanation:"Net decrease = 35²/100 = 12.25%.",
+timeLimit:45
+},
+{
+id:"percentage-test-9",
+topicId:"quant-percentage",
+subtopic:"More Than and Less Than",
+difficulty:"medium",
+type:"mcq",
+question:"A is 60% more than B. By what percent is B less than A?",
+options:["35%","37.5%","40%","60%"],
+answer:1,
+explanation:"Assume B=100, so A=160. B is less than A by 60/160 × 100 = 37.5%.",
+timeLimit:55
+},
+{
+id:"percentage-test-10",
+topicId:"quant-percentage",
+subtopic:"More Than and Less Than",
+difficulty:"medium",
+type:"mcq",
+question:"A is 20% less than B. By what percent is B more than A?",
+options:["20%","22.5%","25%","30%"],
+answer:2,
+explanation:"Required percentage = 100×20/80 = 25%.",
+timeLimit:45
+},
+{
+id:"percentage-test-11",
+topicId:"quant-percentage",
+subtopic:"Marks",
+difficulty:"medium",
+type:"mcq",
+question:"A candidate scores 32% marks and fails by 18 marks. Another scores 44% and gets 30 marks above the pass marks. Find the total marks.",
+options:["360","400","420","450"],
+answer:1,
+explanation:"Difference in percentage = 12%. Difference in marks = 18+30=48. Total marks = 48×100/12 = 400.",
+timeLimit:75
+},
+{
+id:"percentage-test-12",
+topicId:"quant-percentage",
+subtopic:"Marks",
+difficulty:"medium",
+type:"mcq",
+question:"A student needs 36% marks to pass. He scores 162 marks and fails by 18 marks. Find the maximum marks.",
+options:["400","450","500","540"],
+answer:2,
+explanation:"Pass marks = 162+18=180. Total marks = 180×100/36 = 500.",
+timeLimit:60
+},
+{
+id:"percentage-test-13",
+topicId:"quant-percentage",
+subtopic:"Population",
+difficulty:"medium",
+type:"mcq",
+question:"A town has a population of 80,000. It increases by 10% in the first year and 20% in the second year. Find the population after two years.",
+options:["1,04,000","1,05,600","1,06,000","1,08,000"],
+answer:1,
+explanation:"Population = 80,000 × 1.10 × 1.20 = 1,05,600.",
+timeLimit:60
+},
+{
+id:"percentage-test-14",
+topicId:"quant-percentage",
+subtopic:"Population",
+difficulty:"hard",
+type:"mcq",
+question:"The present population of a town is 87,120 after growing by 10% annually for 2 years. Find its population two years ago.",
+options:["70,000","72,000","74,000","75,000"],
+answer:1,
+explanation:"Past population = 87,120 ÷ 1.21 = 72,000.",
+timeLimit:70
+},
+{
+id:"percentage-test-15",
+topicId:"quant-percentage",
+subtopic:"Income, Expenditure and Savings",
+difficulty:"hard",
+type:"mcq",
+question:"A person's income increases by 20% and expenditure increases by 15%. If originally expenditure was 80% of income, find the percentage increase in savings.",
+options:["35%","40%","45%","50%"],
+answer:1,
+explanation:"Assume income=100, expenditure=80, savings=20. New income=120, new expenditure=92, new savings=28. Increase=8. Percentage increase=8/20×100=40%.",
+timeLimit:90
+},
+{
+id:"percentage-test-16",
+topicId:"quant-percentage",
+subtopic:"Expenditure Control",
+difficulty:"medium",
+type:"mcq",
+question:"The price of an item increases by 40%. By what percent should consumption be reduced so that expenditure remains unchanged?",
+options:["25%","28 4/7%","30%","40%"],
+answer:1,
+explanation:"Required reduction = 100×40/140 = 28 4/7%.",
+timeLimit:55
+},
+{
+id:"percentage-test-17",
+topicId:"quant-percentage",
+subtopic:"Expenditure Control",
+difficulty:"hard",
+type:"mcq",
+question:"The price of a commodity decreases by 20% and consumption increases by 15%. Find the percentage change in expenditure.",
+options:["5% decrease","8% decrease","8% increase","No change"],
+answer:1,
+explanation:"New expenditure factor = 0.80 × 1.15 = 0.92. Therefore, expenditure decreases by 8%.",
+timeLimit:60
+},
+{
+id:"percentage-test-18",
+topicId:"quant-percentage",
+subtopic:"Votes",
+difficulty:"medium",
+type:"mcq",
+question:"In an election between two candidates, the winner gets 56% of valid votes and wins by 2,400 votes. Find the total valid votes.",
+options:["18,000","20,000","22,000","24,000"],
+answer:1,
+explanation:"Winning margin = 56%−44%=12%. Total valid votes = 2,400×100/12 = 20,000.",
+timeLimit:70
+},
+{
+id:"percentage-test-19",
+topicId:"quant-percentage",
+subtopic:"Votes",
+difficulty:"hard",
+type:"mcq",
+question:"In an election, 10% votes are invalid. The winner gets 54% of valid votes and wins by 1,440 votes. Find the total votes cast.",
+options:["18,000","19,000","20,000","22,000"],
+answer:2,
+explanation:"Margin among valid votes = 8%. Valid votes = 1,440×100/8 = 18,000. Total votes = 18,000×100/90 = 20,000.",
+timeLimit:90
+},
+{
+id:"percentage-test-20",
+topicId:"quant-percentage",
+subtopic:"Examination",
+difficulty:"hard",
+type:"mcq",
+question:"In an examination, 68% passed English, 72% passed Mathematics and 12% failed both. Find the percentage who passed both subjects.",
+options:["48%","50%","52%","54%"],
+answer:2,
+explanation:"Passed at least one = 88%. Both = 68+72−88 = 52%.",
+timeLimit:75
+},
+{
+id:"percentage-test-21",
+topicId:"quant-percentage",
+subtopic:"Percentage Change",
+difficulty:"hard",
+type:"mcq",
+question:"The numerator of a fraction is increased by 25% and the denominator is decreased by 20%. Find the percentage increase in the fraction.",
+options:["50%","56.25%","60%","62.5%"],
+answer:1,
+explanation:"New factor = 1.25/0.80 = 1.5625. Therefore, increase = 56.25%.",
+timeLimit:80
+},
+{
+id:"percentage-test-22",
+topicId:"quant-percentage",
+subtopic:"Percentage Comparison",
+difficulty:"hard",
+type:"mcq",
+question:"If 30% of A equals 45% of B and B is 20% more than C, then A:C is:",
+options:["3:2","8:5","9:5","2:1"],
+answer:2,
+explanation:"30A=45B, so A:B=3:2. B:C=6:5. Therefore, A:C = 3/2 × 6/5 = 9:5.",
+timeLimit:90
+},
+{
+id:"percentage-test-23",
+topicId:"quant-percentage",
+subtopic:"Successive Percentage Change",
+difficulty:"hard",
+type:"mcq",
+question:"A machine depreciates by 10%, 20% and 25% in three successive years. Find the total depreciation.",
+options:["45%","46%","50%","55%"],
+answer:1,
+explanation:"Remaining factor = 0.90×0.80×0.75 = 0.54. Therefore, depreciation = 46%.",
+commonMistake:"Adding 10+20+25 directly.",
+timeLimit:75
+},
+{
+id:"percentage-test-24",
+topicId:"quant-percentage",
+subtopic:"Reverse Percentage",
+difficulty:"hard",
+type:"mcq",
+question:"After successive increases of 20% and 25%, a number becomes 1,080. Find the original number.",
+options:["680","700","720","750"],
+answer:2,
+explanation:"Overall factor = 1.20×1.25 = 1.50. Original = 1,080/1.50 = 720.",
+timeLimit:65
+},
+{
+id:"percentage-test-25",
+topicId:"quant-percentage",
+subtopic:"Mixed Application",
+difficulty:"hard",
+type:"mcq",
+question:"The marked price of an article is increased by 25%, and then a discount of 20% is given. Compared with the original price, the final price is:",
+options:["5% less","Equal","5% more","10% more"],
+answer:1,
+explanation:"Final factor = 1.25×0.80 = 1. The final price equals the original price.",
+timeLimit:45
+}
+];
+
+export const percentageTopicTestConfig={
+id:"percentage-topic-test",
+topicId:"quant-percentage",
+title:"Percentage Topic Test",
+description:"SSC-level mixed test covering all major Percentage concepts.",
+durationMinutes:25,
+totalQuestions:percentageTopicTest.length,
+marksPerCorrect:2,
+negativeMarksPerWrong:0.5,
+passingPercentage:70,
+masteryPercentage:85,
+instructions:[
+"Attempt all questions without using a calculator.",
+"Select only one option for each question.",
+"Each correct answer carries 2 marks.",
+"Each wrong answer deducts 0.5 marks.",
+"Complete the test within 25 minutes.",
+"Score at least 70% to complete the stage.",
+"Score at least 85% for topic mastery."
+]
+};
+
+export const getPercentageTopicTestQuestionById=id=>
+percentageTopicTest.find(
+question=>question.id===String(id)
+)||null;
+
+export default percentageTopicTest;

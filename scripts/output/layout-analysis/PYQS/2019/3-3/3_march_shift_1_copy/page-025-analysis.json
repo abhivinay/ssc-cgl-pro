@@ -1,0 +1,344 @@
+{
+  "source": "PYQS\\2019\\3-3\\3_march_shift_1_copy\\page-025.png",
+  "width": 1400,
+  "height": 1979,
+  "horizontalLines": [
+    {
+      "y": 45,
+      "startY": 37,
+      "endY": 52,
+      "thickness": 16,
+      "xStart": 223,
+      "xEnd": 1323,
+      "width": 1101
+    },
+    {
+      "y": 67,
+      "startY": 66,
+      "endY": 68,
+      "thickness": 3,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 90,
+      "startY": 83,
+      "endY": 97,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 776,
+      "width": 613
+    },
+    {
+      "y": 334,
+      "startY": 333,
+      "endY": 334,
+      "thickness": 2,
+      "xStart": 767,
+      "xEnd": 1279,
+      "width": 513
+    },
+    {
+      "y": 440,
+      "startY": 439,
+      "endY": 440,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 453,
+      "startY": 451,
+      "endY": 455,
+      "thickness": 5,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 477,
+      "startY": 470,
+      "endY": 484,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 909,
+      "width": 746
+    },
+    {
+      "y": 499,
+      "startY": 492,
+      "endY": 506,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 723,
+      "width": 560
+    },
+    {
+      "y": 543,
+      "startY": 536,
+      "endY": 550,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 803,
+      "width": 640
+    },
+    {
+      "y": 743,
+      "startY": 742,
+      "endY": 743,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 849,
+      "startY": 848,
+      "endY": 849,
+      "thickness": 2,
+      "xStart": 767,
+      "xEnd": 1279,
+      "width": 513
+    },
+    {
+      "y": 863,
+      "startY": 861,
+      "endY": 865,
+      "thickness": 5,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 1131,
+      "startY": 1130,
+      "endY": 1131,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 1237,
+      "startY": 1236,
+      "endY": 1237,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 1251,
+      "startY": 1248,
+      "endY": 1253,
+      "thickness": 6,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 1275,
+      "startY": 1268,
+      "endY": 1282,
+      "thickness": 15,
+      "xStart": 279,
+      "xEnd": 889,
+      "width": 611
+    },
+    {
+      "y": 1318,
+      "startY": 1311,
+      "endY": 1325,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 899,
+      "width": 736
+    },
+    {
+      "y": 1362,
+      "startY": 1355,
+      "endY": 1369,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 837,
+      "width": 674
+    },
+    {
+      "y": 1449,
+      "startY": 1442,
+      "endY": 1456,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 713,
+      "width": 550
+    },
+    {
+      "y": 1649,
+      "startY": 1648,
+      "endY": 1650,
+      "thickness": 3,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 1755,
+      "startY": 1754,
+      "endY": 1756,
+      "thickness": 3,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 1768,
+      "startY": 1767,
+      "endY": 1768,
+      "thickness": 2,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 1932,
+      "startY": 1924,
+      "endY": 1939,
+      "thickness": 16,
+      "xStart": 64,
+      "xEnd": 1257,
+      "width": 1194
+    }
+  ],
+  "candidateRegions": [
+    {
+      "top": 67,
+      "bottom": 453,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 386
+    },
+    {
+      "top": 90,
+      "bottom": 543,
+      "left": 164,
+      "right": 803,
+      "width": 639,
+      "height": 453
+    },
+    {
+      "top": 334,
+      "bottom": 440,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 106
+    },
+    {
+      "top": 440,
+      "bottom": 743,
+      "left": 768,
+      "right": 1278,
+      "width": 510,
+      "height": 303
+    },
+    {
+      "top": 453,
+      "bottom": 863,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 410
+    },
+    {
+      "top": 477,
+      "bottom": 1318,
+      "left": 164,
+      "right": 909,
+      "width": 745,
+      "height": 841
+    },
+    {
+      "top": 499,
+      "bottom": 1449,
+      "left": 164,
+      "right": 723,
+      "width": 559,
+      "height": 950
+    },
+    {
+      "top": 543,
+      "bottom": 1362,
+      "left": 164,
+      "right": 837,
+      "width": 673,
+      "height": 819
+    },
+    {
+      "top": 743,
+      "bottom": 849,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 106
+    },
+    {
+      "top": 849,
+      "bottom": 1131,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 282
+    },
+    {
+      "top": 863,
+      "bottom": 1251,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 388
+    },
+    {
+      "top": 1131,
+      "bottom": 1237,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 106
+    },
+    {
+      "top": 1237,
+      "bottom": 1649,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 412
+    },
+    {
+      "top": 1251,
+      "bottom": 1768,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 517
+    },
+    {
+      "top": 1649,
+      "bottom": 1755,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 106
+    },
+    {
+      "top": 1768,
+      "bottom": 1932,
+      "left": 64,
+      "right": 1301,
+      "width": 1237,
+      "height": 164
+    }
+  ]
+}

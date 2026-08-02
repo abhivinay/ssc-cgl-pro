@@ -1,0 +1,344 @@
+{
+  "source": "PYQS\\2019\\3-3\\3_march_shift_1_copy\\page-012.png",
+  "width": 1400,
+  "height": 1979,
+  "horizontalLines": [
+    {
+      "y": 45,
+      "startY": 37,
+      "endY": 52,
+      "thickness": 16,
+      "xStart": 223,
+      "xEnd": 1323,
+      "width": 1101
+    },
+    {
+      "y": 67,
+      "startY": 66,
+      "endY": 68,
+      "thickness": 3,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 90,
+      "startY": 83,
+      "endY": 97,
+      "thickness": 15,
+      "xStart": 343,
+      "xEnd": 874,
+      "width": 532
+    },
+    {
+      "y": 312,
+      "startY": 311,
+      "endY": 312,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 418,
+      "startY": 417,
+      "endY": 418,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 432,
+      "startY": 429,
+      "endY": 434,
+      "thickness": 6,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 455,
+      "startY": 448,
+      "endY": 462,
+      "thickness": 15,
+      "xStart": 216,
+      "xEnd": 890,
+      "width": 675
+    },
+    {
+      "y": 678,
+      "startY": 677,
+      "endY": 678,
+      "thickness": 2,
+      "xStart": 767,
+      "xEnd": 1279,
+      "width": 513
+    },
+    {
+      "y": 784,
+      "startY": 783,
+      "endY": 784,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 797,
+      "startY": 795,
+      "endY": 799,
+      "thickness": 5,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 821,
+      "startY": 814,
+      "endY": 828,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 886,
+      "width": 723
+    },
+    {
+      "y": 1022,
+      "startY": 1021,
+      "endY": 1022,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 1128,
+      "startY": 1127,
+      "endY": 1128,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 1142,
+      "startY": 1139,
+      "endY": 1144,
+      "thickness": 6,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 1165,
+      "startY": 1158,
+      "endY": 1172,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 777,
+      "width": 614
+    },
+    {
+      "y": 1366,
+      "startY": 1365,
+      "endY": 1366,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 1472,
+      "startY": 1471,
+      "endY": 1472,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1279,
+      "width": 512
+    },
+    {
+      "y": 1486,
+      "startY": 1483,
+      "endY": 1488,
+      "thickness": 6,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 1509,
+      "startY": 1502,
+      "endY": 1516,
+      "thickness": 15,
+      "xStart": 164,
+      "xEnd": 919,
+      "width": 756
+    },
+    {
+      "y": 1710,
+      "startY": 1709,
+      "endY": 1710,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 1816,
+      "startY": 1815,
+      "endY": 1816,
+      "thickness": 2,
+      "xStart": 767,
+      "xEnd": 1279,
+      "width": 513
+    },
+    {
+      "y": 1829,
+      "startY": 1828,
+      "endY": 1829,
+      "thickness": 2,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 1932,
+      "startY": 1924,
+      "endY": 1939,
+      "thickness": 16,
+      "xStart": 64,
+      "xEnd": 1257,
+      "width": 1194
+    }
+  ],
+  "candidateRegions": [
+    {
+      "top": 67,
+      "bottom": 432,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 365
+    },
+    {
+      "top": 312,
+      "bottom": 418,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 106
+    },
+    {
+      "top": 418,
+      "bottom": 678,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 260
+    },
+    {
+      "top": 432,
+      "bottom": 797,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 365
+    },
+    {
+      "top": 678,
+      "bottom": 784,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 106
+    },
+    {
+      "top": 784,
+      "bottom": 1022,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 238
+    },
+    {
+      "top": 797,
+      "bottom": 1142,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 345
+    },
+    {
+      "top": 821,
+      "bottom": 1509,
+      "left": 164,
+      "right": 919,
+      "width": 755,
+      "height": 688
+    },
+    {
+      "top": 1022,
+      "bottom": 1128,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 106
+    },
+    {
+      "top": 1128,
+      "bottom": 1366,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 238
+    },
+    {
+      "top": 1142,
+      "bottom": 1486,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 344
+    },
+    {
+      "top": 1366,
+      "bottom": 1472,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 106
+    },
+    {
+      "top": 1472,
+      "bottom": 1710,
+      "left": 768,
+      "right": 1279,
+      "width": 511,
+      "height": 238
+    },
+    {
+      "top": 1486,
+      "bottom": 1829,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 343
+    },
+    {
+      "top": 1710,
+      "bottom": 1816,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 106
+    },
+    {
+      "top": 1829,
+      "bottom": 1932,
+      "left": 64,
+      "right": 1301,
+      "width": 1237,
+      "height": 103
+    }
+  ]
+}

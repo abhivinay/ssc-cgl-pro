@@ -1,0 +1,63 @@
+const topic=(id,name,difficulty,weightage,trend,estimatedHours,xp,priority,unlocked=false)=>({
+id,
+name,
+difficulty,
+weightage,
+trend,
+estimatedHours,
+xp,
+priority,
+completed:false,
+unlocked,
+lastStudied:null,
+revisionLevel:0,
+notes:[],
+mistakes:[],
+stages:{
+learn:false,
+conceptCheck:false,
+level1:false,
+level2:false,
+level3:false,
+topicTest:false,
+pyq:false,
+revision:false
+}
+});
+
+const english=[
+topic(1,"Parts of Speech",1,5,5,3,50,1,true),
+topic(2,"Noun",1,3,3,2,40,2),
+topic(3,"Pronoun",1,3,3,2,40,3),
+topic(4,"Verb",1,5,5,3,50,4),
+topic(5,"Adjective",1,3,3,2,40,5),
+topic(6,"Adverb",1,3,3,2,40,6),
+topic(7,"Preposition",2,5,5,3,50,7),
+topic(8,"Conjunction",1,3,3,2,40,8),
+topic(9,"Articles",1,4,4,2,40,9),
+topic(10,"Tenses",2,5,5,4,60,10),
+topic(11,"Subject Verb Agreement",2,5,5,3,50,11),
+topic(12,"Voice",2,4,4,3,50,12),
+topic(13,"Narration",2,4,4,3,50,13),
+topic(31,"Sentence Correction",2,5,5,4,60,14),
+topic(14,"Error Spotting",2,5,5,5,70,15),
+topic(15,"Sentence Improvement",2,5,5,4,60,16),
+topic(16,"Fill in the Blanks",1,4,4,2,40,17),
+topic(30,"Phrase Replacement",2,4,4,3,50,18),
+topic(19,"Para Jumbles",2,4,4,3,50,19),
+topic(20,"Sentence Arrangement",2,3,3,2,40,20),
+topic(17,"Cloze Test",2,5,5,3,50,21),
+topic(18,"Reading Comprehension",3,5,5,5,70,22),
+topic(21,"Synonyms",1,5,5,3,50,23),
+topic(22,"Antonyms",1,5,5,3,50,24),
+topic(23,"One Word Substitution",2,5,5,3,50,25),
+topic(24,"Idioms & Phrases",2,5,5,4,60,26),
+topic(26,"Vocabulary",2,5,5,5,70,27),
+topic(28,"Root Words",2,3,3,2,40,28),
+topic(27,"Homonyms",2,3,3,2,40,29),
+topic(29,"Active Vocabulary",2,4,4,3,50,30),
+topic(25,"Spelling Correction",1,4,4,2,40,31),
+topic(32,"Grammar Rules Revision",2,5,5,3,50,32)
+];
+
+export default english;

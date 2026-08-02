@@ -1,0 +1,88 @@
+{
+  "source": "PYQS\\2019\\3-3\\3_march_shift_1_copy\\page-028.png",
+  "width": 1400,
+  "height": 1979,
+  "horizontalLines": [
+    {
+      "y": 45,
+      "startY": 37,
+      "endY": 52,
+      "thickness": 16,
+      "xStart": 223,
+      "xEnd": 1323,
+      "width": 1101
+    },
+    {
+      "y": 67,
+      "startY": 66,
+      "endY": 68,
+      "thickness": 3,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 334,
+      "startY": 333,
+      "endY": 334,
+      "thickness": 2,
+      "xStart": 767,
+      "xEnd": 1279,
+      "width": 513
+    },
+    {
+      "y": 440,
+      "startY": 439,
+      "endY": 440,
+      "thickness": 2,
+      "xStart": 768,
+      "xEnd": 1278,
+      "width": 511
+    },
+    {
+      "y": 452,
+      "startY": 451,
+      "endY": 452,
+      "thickness": 2,
+      "xStart": 101,
+      "xEnd": 1301,
+      "width": 1201
+    },
+    {
+      "y": 477,
+      "startY": 476,
+      "endY": 477,
+      "thickness": 2,
+      "xStart": 82,
+      "xEnd": 1320,
+      "width": 1239
+    },
+    {
+      "y": 1932,
+      "startY": 1924,
+      "endY": 1939,
+      "thickness": 16,
+      "xStart": 64,
+      "xEnd": 1257,
+      "width": 1194
+    }
+  ],
+  "candidateRegions": [
+    {
+      "top": 67,
+      "bottom": 452,
+      "left": 101,
+      "right": 1301,
+      "width": 1200,
+      "height": 385
+    },
+    {
+      "top": 334,
+      "bottom": 440,
+      "left": 767,
+      "right": 1279,
+      "width": 512,
+      "height": 106
+    }
+  ]
+}
