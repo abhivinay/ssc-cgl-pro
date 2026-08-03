@@ -3,17 +3,13 @@ const STORAGE_KEY="ssc-sentinel-revisions";
 export function readRevisions(){
 try{
 const data=localStorage.getItem(STORAGE_KEY);
-
 if(!data)return[];
-
 const parsed=JSON.parse(data);
-
 if(!Array.isArray(parsed)){
 console.warn("Invalid revision storage. Resetting...");
 localStorage.removeItem(STORAGE_KEY);
 return[];
 }
-
 return parsed.filter(item=>
 item&&
 typeof item==="object"&&
@@ -27,10 +23,7 @@ return[];
 }
 
 export function writeRevisions(tasks){
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(tasks)
-);
+localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
 return tasks;
 }
 
@@ -42,10 +35,8 @@ return updated;
 }
 
 export function addRevisionTasks(newTasks){
-if(!newTasks.length)return readRevisions();
-
+if(!Array.isArray(newTasks)||!newTasks.length)return readRevisions();
 const tasks=readRevisions();
-
 const uniqueTasks=newTasks.filter(newTask=>
 !tasks.some(existingTask=>
 existingTask.topicId===newTask.topicId&&
@@ -53,9 +44,7 @@ existingTask.source===newTask.source&&
 !existingTask.completed
 )
 );
-
 if(!uniqueTasks.length)return tasks;
-
 const updated=[...uniqueTasks,...tasks];
 writeRevisions(updated);
 return updated;
@@ -63,20 +52,15 @@ return updated;
 
 export function updateRevisionTask(updatedTask){
 const tasks=readRevisions();
-
 const updated=tasks.map(task=>
 task.id===updatedTask.id?updatedTask:task
 );
-
 writeRevisions(updated);
 return updated;
 }
 
 export function removeRevisionTask(taskId){
-const tasks=readRevisions().filter(
-task=>task.id!==taskId
-);
-
+const tasks=readRevisions().filter(task=>task.id!==taskId);
 writeRevisions(tasks);
 return tasks;
 }
@@ -86,9 +70,7 @@ localStorage.removeItem(STORAGE_KEY);
 }
 
 export function getRevisionTaskById(taskId){
-return readRevisions().find(
-task=>task.id===taskId
-)||null;
+return readRevisions().find(task=>task.id===taskId)||null;
 }
 
 export default{
