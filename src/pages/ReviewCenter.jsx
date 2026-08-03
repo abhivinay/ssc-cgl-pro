@@ -1,5 +1,5 @@
 import{useEffect,useMemo,useState}from"react";
-import{CheckCircle2,ChevronLeft,ChevronRight,Clock3,Search,ShieldCheck,ThumbsDown,Trash2}from"lucide-react";
+import{CheckCircle2,ChevronLeft,ChevronRight,Clock3,Download,Search,ShieldCheck,ThumbsDown,Trash2}from"lucide-react";
 import useReviewCenter from"../hooks/useReviewCenter";
 
 const SUBJECT_TOPICS={
@@ -83,6 +83,29 @@ Math.min(filtered.length-1,currentIndex+step)
 if(filtered[next])setActiveId(filtered[next].id);
 }
 
+function exportJson(){
+if(!questions.length)return;
+
+const payload={
+exportedAt:new Date().toISOString(),
+questionCount:questions.length,
+questions
+};
+const blob=new Blob([JSON.stringify(payload,null,2)],{
+type:"application/json"
+});
+const url=URL.createObjectURL(blob);
+const link=document.createElement("a");
+const date=new Date().toISOString().slice(0,10);
+
+link.href=url;
+link.download=`ssc-extracted-questions-${date}.json`;
+document.body.appendChild(link);
+link.click();
+link.remove();
+setTimeout(()=>URL.revokeObjectURL(url),0);
+}
+
 const topicOptions=current
 ?(SUBJECT_TOPICS[current.subject]||[])
 :[];
@@ -101,6 +124,7 @@ Review Center
 Validate and approve AI-extracted SSC questions.
 </p>
 </div>
+<div className="flex flex-wrap items-center gap-3">
 <div className="flex items-center gap-2 text-xs text-zinc-400">
 <span className={`h-2 w-2 rounded-full ${
 saveState==="error"
@@ -114,6 +138,16 @@ saveState==="error"
 :saveState==="error"
 ?"Autosave failed"
 :"All changes saved"}
+</div>
+<button
+type="button"
+onClick={exportJson}
+disabled={!questions.length}
+className="flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-40"
+>
+<Download size={17}/>
+Export JSON
+</button>
 </div>
 </header>
 

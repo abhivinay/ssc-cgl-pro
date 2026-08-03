@@ -1,5 +1,5 @@
-import {NavLink} from "react-router-dom";
-import {
+import{NavLink}from"react-router-dom";
+import{
 Home,
 Target,
 BookOpen,
@@ -12,9 +12,10 @@ AlertTriangle,
 Timer as TimerIcon,
 Trophy,
 Brain,
-ShieldCheck
-} from "lucide-react";
-import {useStudy} from "../../context/StudyContext";
+ShieldCheck,
+FileSearch
+}from"lucide-react";
+import{useStudy}from"../../context/StudyContext";
 
 const menuItems=[
 {path:"/dashboard",label:"Dashboard",icon:Home},
@@ -30,10 +31,12 @@ const menuItems=[
 {path:"/mistakes",label:"Mistake Notebook",icon:AlertTriangle},
 {path:"/timer",label:"Study Timer",icon:TimerIcon},
 {path:"/achievements",label:"Achievements",icon:Trophy},
+{path:"/content-studio/extractor",label:"PDF Extractor",icon:FileSearch},
 {path:"/content-studio/review",label:"Review Center",icon:ShieldCheck}
 ];
+
 export default function Sidebar(){
-const {studyState}=useStudy();
+const{studyState}=useStudy();
 
 return(
 <aside className="flex h-full w-72 flex-shrink-0 flex-col border-r border-zinc-800 bg-zinc-900">

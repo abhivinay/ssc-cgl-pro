@@ -20,12 +20,13 @@ import Missions from"./pages/Missions";
 import Analytics from"./pages/Analytics";
 import Planner from"./pages/Planner";
 import Achievements from"./pages/Achievements";
-import AchievementManager from "./components/achievements/AchievementManager";
+import AchievementManager from"./components/achievements/AchievementManager";
 import BrainTrainer from"./pages/BrainTrainer";
 import Developer from"./pages/Developer";
 import Progress from"./pages/Progress";
 import TopicStage from"./pages/TopicStage";
 import ReviewCenter from"./pages/ReviewCenter";
+import GeminiExtractor from"./pages/GeminiExtractor";
 
 function App(){
 return(
@@ -59,9 +60,10 @@ return(
 <Route path="/revision" element={<Revision/>}/>
 <Route path="/timer" element={<Timer/>}/>
 <Route path="/pyq-review" element={<PyqReview/>}/>
+<Route path="/content-studio/extractor" element={<GeminiExtractor/>}/>
 <Route path="/content-studio/review" element={<ReviewCenter/>}/>
-<Route path="*" element={<Navigate to="/dashboard" replace/>}/>
 <Route path="/achievements" element={<Achievements/>}/>
+<Route path="*" element={<Navigate to="/dashboard" replace/>}/>
 </Routes>
 </div>
 </div>
