@@ -11,7 +11,8 @@ StickyNote,
 AlertTriangle,
 Timer as TimerIcon,
 Trophy,
-Brain
+Brain,
+ShieldCheck
 } from "lucide-react";
 import {useStudy} from "../../context/StudyContext";
 
@@ -28,7 +29,8 @@ const menuItems=[
 {path:"/notes",label:"Notes Vault",icon:StickyNote},
 {path:"/mistakes",label:"Mistake Notebook",icon:AlertTriangle},
 {path:"/timer",label:"Study Timer",icon:TimerIcon},
-{path:"/achievements",label:"Achievements",icon:Trophy}
+{path:"/achievements",label:"Achievements",icon:Trophy},
+{path:"/content-studio/review",label:"Review Center",icon:ShieldCheck}
 ];
 export default function Sidebar(){
 const {studyState}=useStudy();

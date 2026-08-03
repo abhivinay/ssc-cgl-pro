@@ -25,6 +25,7 @@ import BrainTrainer from"./pages/BrainTrainer";
 import Developer from"./pages/Developer";
 import Progress from"./pages/Progress";
 import TopicStage from"./pages/TopicStage";
+import ReviewCenter from"./pages/ReviewCenter";
 
 function App(){
 return(
@@ -58,6 +59,7 @@ return(
 <Route path="/revision" element={<Revision/>}/>
 <Route path="/timer" element={<Timer/>}/>
 <Route path="/pyq-review" element={<PyqReview/>}/>
+<Route path="/content-studio/review" element={<ReviewCenter/>}/>
 <Route path="*" element={<Navigate to="/dashboard" replace/>}/>
 <Route path="/achievements" element={<Achievements/>}/>
 </Routes>
