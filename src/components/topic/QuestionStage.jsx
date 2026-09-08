@@ -1,4 +1,7 @@
-import{useMemo,useState}from"react";
+import{useEffect,useMemo,useState}from"react";
+import {readJSON,writeJSON} from "../../services/safeStorage";
+import {questionSignature} from "../../core/test/examSession";
+import {addMistake} from "../../services/mistakeStorage";
 import GlassCard from"../ui/GlassCard";
 import Badge from"../ui/Badge";
 import Button from"../ui/Button";
@@ -17,17 +20,22 @@ title="Practice",
 description="Answer every question carefully.",
 questions=[],
 passingPercentage=70,
+topicId,
+subject,
 onComplete
 }){
 const safeQuestions=Array.isArray(questions)
 ?questions
 :[];
 
-const[currentIndex,setCurrentIndex]=useState(0);
-const[selectedAnswer,setSelectedAnswer]=useState(null);
-const[answers,setAnswers]=useState([]);
-const[showExplanation,setShowExplanation]=useState(false);
-const[finished,setFinished]=useState(false);
+const cacheKey=`ssc-practice:${questionSignature(safeQuestions)}`;
+const[stored]=useState(()=>readJSON(cacheKey,{})||{});
+const[currentIndex,setCurrentIndex]=useState(Math.min(Math.max(0,stored.currentIndex||0),Math.max(0,safeQuestions.length-1)));
+const[selectedAnswer,setSelectedAnswer]=useState(stored.selectedAnswer??null);
+const[answers,setAnswers]=useState(Array.isArray(stored.answers)?stored.answers:[]);
+const[showExplanation,setShowExplanation]=useState(Boolean(stored.showExplanation));
+const[finished,setFinished]=useState(Boolean(stored.finished));
+useEffect(()=>{try{writeJSON(cacheKey,{currentIndex,selectedAnswer,answers,showExplanation,finished});}catch{/* A global recovery notice retains the current in-memory attempt. */}},[cacheKey,currentIndex,selectedAnswer,answers,showExplanation,finished]);
 
 const currentQuestion=safeQuestions[currentIndex]||null;
 
@@ -52,7 +60,7 @@ const passed=accuracy>=passingPercentage;
 
 const submitAnswer=()=>{
 if(
-selectedAnswer===null||
+selectedAnswer===null||showExplanation||
 !currentQuestion
 ){
 return;
@@ -63,6 +71,7 @@ getSafeAnswerIndex(currentQuestion);
 
 const correct=
 selectedAnswer===correctAnswer;
+if(!correct&&topicId)addMistake({id:crypto.randomUUID(),topicId,subject,questionId:currentQuestion.id,question:currentQuestion.question,selectedAnswer:currentQuestion.options[selectedAnswer],correctAnswer:currentQuestion.options[correctAnswer],explanation:currentQuestion.explanation||"",createdAt:Date.now()});
 
 setAnswers(previous=>[
 ...previous,

@@ -35,7 +35,7 @@ const menuItems=[
 {path:"/content-studio/review",label:"Review Center",icon:ShieldCheck}
 ];
 
-export default function Sidebar(){
+export default function Sidebar({onNavigate}){
 const{studyState}=useStudy();
 
 return(
@@ -70,6 +70,7 @@ return(
 <NavLink
 key={item.path}
 to={item.path}
+onClick={onNavigate}
 className={({isActive})=>`flex items-center gap-3 rounded-2xl px-4 py-3.5 text-[15px] font-medium transition-all ${
 isActive
 ?"bg-violet-600 text-white"
@@ -82,6 +83,7 @@ isActive
 );
 })}
 </nav>
+<NavLink className="px-8 py-4 text-cyan-200" to="/settings" onClick={onNavigate}>Data & recovery</NavLink>
 
 <div className="mt-auto border-t border-zinc-800 p-6 text-xs text-zinc-500">
 SSC CGL 2026 • Built with dedication

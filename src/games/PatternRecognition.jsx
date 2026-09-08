@@ -29,7 +29,7 @@ const finalRound=updated.round>=TOTAL_ROUNDS;
 
 if(finalRound){
 
-const summary=finishGame();
+const summary=finishGame(updated);
 
 onComplete?.({
 correctAnswers:summary.correctAnswers,

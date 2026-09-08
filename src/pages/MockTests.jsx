@@ -6,6 +6,7 @@ const SUBJECTS=["Quant","Reasoning","English","General Awareness"];
 
 export default function MockTests(){
 const{studyState,setStudyState}=useStudy();
+const[error,setError]=useState("");
 
 const[form,setForm]=useState({
 name:"",
@@ -30,7 +31,8 @@ missionCompleted:studyState.dailyMissionPlan?.completed
 },[studyState,mocks]);
 
 const saveMock=()=>{
-if(!form.name.trim())return;
+if(!form.name.trim()||["score","total","accuracy","attempted","time"].some(key=>form[key]===""||!Number.isFinite(Number(form[key])))||Number(form.total)<=0||Number(form.score)>Number(form.total)||Number(form.accuracy)<0||Number(form.accuracy)>100||Number(form.attempted)<0||!Number.isInteger(Number(form.attempted))||Number(form.time)<=0){setError("Enter a name and valid numbers: positive total/time, score no higher than total, accuracy 0–100 and whole-number attempts.");return;}
+setError("");
 
 const mock={
 id:Date.now(),
@@ -65,7 +67,7 @@ return(
 <div className="mb-8">
 <h1 className="text-4xl font-bold">Mock Analysis Center</h1>
 <p className="mt-2 text-zinc-400">
-Record Oliveboard mock results and get AI analysis.
+Record mock results and get rule-based performance guidance.
 </p>
 </div>
 
@@ -73,6 +75,7 @@ Record Oliveboard mock results and get AI analysis.
 
 <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
 <h2 className="text-2xl font-semibold">Add Mock</h2>
+{error&&<p role="alert" className="mt-3 text-rose-300">{error}</p>}
 
 <div className="mt-5 space-y-4">
 

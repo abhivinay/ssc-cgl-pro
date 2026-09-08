@@ -1,6 +1,7 @@
 import{useEffect,useMemo,useState}from"react";
 import{CheckCircle2,ChevronLeft,ChevronRight,Clock3,Download,Search,ShieldCheck,ThumbsDown,Trash2}from"lucide-react";
 import useReviewCenter from"../hooks/useReviewCenter";
+import {canApproveQuestion} from "../services/reviewStorage";
 
 const SUBJECT_TOPICS={
 Quant:["Number System","Percentage","Ratio and Proportion","Average","Profit and Loss","Simple Interest","Compound Interest","Time and Work","Speed Time and Distance","Algebra","Geometry","Mensuration","Trigonometry","Data Interpretation"],
@@ -58,6 +59,7 @@ setSelected(ids=>ids.filter(id=>questions.some(item=>item.id===id)));
 },[questions]);
 
 function patch(updates){
+if(updates.reviewStatus==="approved"&&!canApproveQuestion({...current,...updates})){window.alert("Add the question, four options, answer key, subject and topic before approval.");return;}
 if(current)updateQuestion(current.id,updates);
 }
 
@@ -71,6 +73,7 @@ ids.includes(id)
 
 function runBulk(nextStatus){
 if(!selected.length)return;
+if(nextStatus==="approved"&&questions.some(question=>selected.includes(question.id)&&!canApproveQuestion(question))){window.alert("Some selected questions are incomplete. Review their question, options, answer key and classification first.");return;}
 setBulkStatus(selected,nextStatus);
 setSelected([]);
 }

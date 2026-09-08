@@ -1,3 +1,4 @@
+import {getLevel,getCurrentLevelXP as levelXP,getNextLevelXP} from "../../utils/levelEngine";
 export const XP={
 LEARN:20,
 PRACTICE:30,
@@ -9,15 +10,15 @@ PERFECT_SCORE:25
 };
 
 export function calculateLevel(totalXP){
-return Math.floor(totalXP/100)+1;
+return getLevel(totalXP);
 }
 
 export function getCurrentLevelXP(totalXP){
-return totalXP%100;
+return levelXP(totalXP);
 }
 
 export function getXPToNextLevel(totalXP){
-return 100-getCurrentLevelXP(totalXP);
+return getNextLevelXP()-getCurrentLevelXP(totalXP);
 }
 
 export function awardXP(currentXP,amount){

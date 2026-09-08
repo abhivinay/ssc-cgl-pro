@@ -17,6 +17,9 @@ const[answer,setAnswer]=useState("");
 const[showNumber,setShowNumber]=useState(true);
 
 const inputRef=useRef(null);
+const transitionRef=useRef(null);
+const submittedRound=useRef(null);
+useEffect(()=>()=>clearTimeout(transitionRef.current),[]);
 
 useEffect(()=>{
 
@@ -40,53 +43,20 @@ state.displayDuration
 const handleSubmit=e=>{
 
 e.preventDefault();
+if(showNumber||submittedRound.current===state.round||!answer.trim())return;
+submittedRound.current=state.round;
 
 const result=submitAnswer(answer);
 
 setAnswer("");
 
-if(result.lastResult.correct){
-
-if(state.round>=5){
-
-const summary=finishGame();
-
-const attempts=
-summary.correctAnswers+
-summary.wrongAnswers;
-
-const accuracy=attempts
-?Math.round(
-(summary.correctAnswers/attempts)*100
-)
-:0;
-
-onComplete?.({
-correctAnswers:summary.correctAnswers,
-wrongAnswers:summary.wrongAnswers,
-totalAttempts:attempts,
-accuracy,
-score:
-summary.correctAnswers*100-
-summary.wrongAnswers*25,
-reactionTime:summary.reactionTime
-});
-
+if(result.round>=5){
+const summary=finishGame(result);
+const attempts=summary.correctAnswers+summary.wrongAnswers;
+onComplete?.({...summary,totalAttempts:attempts,accuracy:attempts?Math.round(summary.correctAnswers/attempts*100):0});
 return;
-
 }
-
-setTimeout(()=>{
-nextRound();
-},1000);
-
-}else{
-
-setTimeout(()=>{
-nextRound();
-},1200);
-
-}
+transitionRef.current=setTimeout(()=>nextRound(),1000);
 
 };
 
