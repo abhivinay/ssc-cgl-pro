@@ -148,6 +148,7 @@ test("backup rejects foreign keys and malformed study data", async () => {
   assert.throws(() => validateEntries({ studyState: '{"xp":-1}' }));
   assert.throws(() => parseBackup('{"format":"other","version":1,"entries":{}}'));
   assert.deepEqual(Object.keys(validateEntries({ studyState: '{"xp":10,"topics":[]}' })), ["studyState"]);
+  assert.deepEqual(Object.keys(validateEntries({ studyState: '{"xp":10,"topics":{"quant":{"progress":25}}}' })), ["studyState"]);
 });
 
 test("disk store persists across instances, rotates recovery and rejects stale writes", () => {

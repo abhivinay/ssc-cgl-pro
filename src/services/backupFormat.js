@@ -8,8 +8,10 @@ export function validateEntries(entries) {
   for (const [key, value] of Object.entries(entries)) {
     if (!isAppKey(key) || key.length > 200 || typeof value !== "string") throw new Error(`Unsupported backup entry: ${key}`);
     if (key === "studyState") {
-      const study = JSON.parse(value);
-      if (!study || typeof study !== "object" || (study.topics !== undefined && !Array.isArray(study.topics)) || (study.xp !== undefined && (!Number.isFinite(study.xp) || study.xp < 0))) throw new Error("Invalid study progress in backup.");
+      let study;
+      try { study = JSON.parse(value); } catch { throw new Error("Invalid study progress in backup."); }
+      const topicsAreValid = study?.topics === undefined || Array.isArray(study.topics) || (study.topics && typeof study.topics === "object" && !Array.isArray(study.topics));
+      if (!study || typeof study !== "object" || Array.isArray(study) || !topicsAreValid || (study.xp !== undefined && (!Number.isFinite(study.xp) || study.xp < 0))) throw new Error("Invalid study progress in backup.");
     }
     checked[key] = value;
   }
