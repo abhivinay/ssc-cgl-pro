@@ -1,3 +1,5 @@
+import {writeJSON,readJSON} from "./safeStorage";
+import {addXP} from "./xpStorage";
 const STORAGE_KEY="ssc-brain-trainer";
 
 const DEFAULT_STATE={
@@ -17,7 +19,7 @@ history:[]
 const isValidObject=value=>
 value&&typeof value==="object"&&!Array.isArray(value);
 
-const normalizeState=value=>{
+export const normalizeState=value=>{
 if(!isValidObject(value)){
 return createDefaultState();
 }
@@ -64,8 +66,6 @@ console.error(
 error
 );
 
-localStorage.removeItem(STORAGE_KEY);
-
 return createDefaultState();
 }
 }
@@ -73,10 +73,7 @@ return createDefaultState();
 export function writeBrainState(state){
 const normalized=normalizeState(state);
 
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(normalized)
-);
+writeJSON(STORAGE_KEY,normalized);
 
 return normalized;
 }
@@ -97,19 +94,17 @@ return readBrainState().dailySession;
 }
 
 export function completeDailyBrainSession(session){
-if(!isValidObject(session)){
+if(!isValidObject(session)||session.status!=="completed"||!session.completedAt||session.games?.length!==5||session.results?.length!==5){
 return readBrainState();
 }
 
 const state=readBrainState();
 
 const alreadySaved=state.history.some(
-item=>item.id===session.id
+item=>item.id===session.id||item.dateKey===session.dateKey
 );
 
-if(alreadySaved){
-return state;
-}
+if(alreadySaved)return state;
 
 const score=Math.max(
 0,
@@ -133,7 +128,7 @@ session.completedAt||
 Date.now()
 };
 
-return writeBrainState({
+const updated=writeBrainState({
 ...state,
 dailySession:historyEntry,
 history:[
@@ -148,6 +143,10 @@ score
 totalXP:state.totalXP+xp,
 lastCompletedDate:String(completedDate)
 });
+addXP({amount:xp,reason:"Daily brain training",sourceId:`brain:${session.dateKey}`});
+const study=readJSON("studyState",{});
+writeJSON("studyState",{...study,brainTrainerCompleted:true,brainCompletedDate:session.dateKey});
+return updated;
 }
 
 export function getBrainHistory(limit){

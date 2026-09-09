@@ -115,9 +115,7 @@ if(stageIndex===0){
 return true;
 }
 
-return Boolean(
-stages[STAGES[stageIndex-1]]
-);
+return STAGES.slice(0,stageIndex).every(previous=>stages[previous]);
 };
 
 export const isTopicComplete=topic=>{

@@ -2,7 +2,7 @@ import{useRef,useState}from"react";
 import{FileText,LoaderCircle,UploadCloud,XCircle}from"lucide-react";
 import{normalizeReviewQuestion,saveReviewQuestions}from"../services/reviewStorage";
 
-const API_URL="http://localhost:5000/api/extract-pdf";
+const API_URL="/api/extract-pdf";
 const MAX_SIZE=20*1024*1024;
 
 export default function GeminiExtractor(){

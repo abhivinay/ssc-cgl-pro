@@ -34,9 +34,12 @@ const interval=getRevisionInterval(nextCount);
 
 return{
 ...task,
+id:crypto.randomUUID(),
 completed:false,
 completedAt:null,
 revisionCount:nextCount,
+level:nextCount,
+dueAt:new Date(Date.now()+(interval*DAY_IN_MS)).toISOString(),
 scheduledAt:Date.now()+(interval*DAY_IN_MS)
 };
 }

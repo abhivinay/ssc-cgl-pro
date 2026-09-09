@@ -36,10 +36,10 @@ createNextSequenceRound(previous)
 
 },[]);
 
-const finishGame=useCallback(()=>{
+const finishGame=useCallback((latestState=state)=>{
 
 const completed=
-completeSequenceGame(state);
+completeSequenceGame(latestState);
 
 const summary=
 getSequenceSummary(completed);

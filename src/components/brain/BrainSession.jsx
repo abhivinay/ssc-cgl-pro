@@ -1,4 +1,6 @@
 import{useEffect,useMemo,useState}from"react";
+import {useNavigate} from "react-router-dom";
+import Button from "../ui/Button";
 import useBrainTrainer from"../../hooks/useBrainTrainer";
 import MentalMath from"../../games/MentalMath";
 import NumberMemory from"../../games/NumberMemory";
@@ -22,6 +24,7 @@ accuracy:0
 };
 
 export default function BrainSession(){
+const navigate=useNavigate();
 const{
 session,
 dailyPlan,
@@ -90,7 +93,7 @@ setLiveGameStats(EMPTY_LIVE_STATS);
 },[session?.activeGame?.id]);
 
 const handleGameComplete=result=>{
-finishCurrentGame(result);
+finishCurrentGame({...result,gameId:session?.activeGame?.id});
 setLiveGameStats(EMPTY_LIVE_STATS);
 };
 
@@ -110,7 +113,7 @@ className="rounded-3xl bg-violet-600 px-12 py-5 text-2xl font-black transition d
 
 if(isSessionComplete){
 return(
-<BrainResult session={session}/>
+<div className="space-y-6"><BrainResult session={session}/><Button fullWidth size="lg" onClick={()=>navigate("/dashboard")}>Enter Command Center</Button></div>
 );
 }
 

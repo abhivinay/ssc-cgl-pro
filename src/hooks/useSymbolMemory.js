@@ -36,10 +36,10 @@ createNextSymbolRound(previous)
 
 },[]);
 
-const finishGame=useCallback(()=>{
+const finishGame=useCallback((latestState=state)=>{
 
 const completed=
-completeSymbolGame(state);
+completeSymbolGame(latestState);
 
 const summary=
 getSymbolSummary(completed);

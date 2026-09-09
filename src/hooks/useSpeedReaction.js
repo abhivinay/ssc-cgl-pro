@@ -45,10 +45,10 @@ createNextReactionRound(previous)
 
 },[]);
 
-const finishGame=useCallback(()=>{
+const finishGame=useCallback((latestState=state)=>{
 
 const completed=
-completeReactionGame(state);
+completeReactionGame(latestState);
 
 const summary=
 getReactionSummary(completed);

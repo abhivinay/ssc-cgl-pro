@@ -1,16 +1,44 @@
-# React + Vite
+# SSC Sentinel — Command Center
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal SSC preparation app built with React, Vite and an Express backend.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Use Node.js 24. Install the locked dependencies:
 
-## React Compiler
+```sh
+npm ci
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Start the backend in one terminal and the frontend in another:
 
-## Expanding the ESLint configuration
+```sh
+npm run server
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```sh
+npm run dev
+```
+
+Open the address printed by Vite. Backend port 5000 is proxied through the frontend. The flow is Sentinel entry → five daily brain games → Command Center.
+
+The backend saves progress to `.ssc-data/` without requiring an AI key. Keep this directory backed up. Data & recovery shows save status and offers backup export/import. Browser cache alone is not a durable backup or cloud sync.
+
+## Optional PDF extraction
+
+Copy `.env.example` to `.env` and configure `GEMINI_API_KEY` plus a `GEMINI_MODEL` actually enabled for your provider account. Keys stay on the server. Never commit `.env`. Restart the backend after changing it.
+
+Extraction is disabled with a clear error until both settings exist. The backend accepts local connections only; it is not ready for public deployment.
+
+## Verify
+
+```sh
+npm test
+npm run build
+```
+
+The regression suite uses synthetic records and temporary directories, not your saved progress. Existing repository-wide lint debt remains; `npm run lint` is available for cleanup.
+
+## Upgrade scope
+
+See [Sentinel upgrade notes](docs/SENTINEL_UPGRADE.md) for implemented changes, migration behavior and remaining release gates. This branch is based on the connected August GitHub snapshot; compare any newer laptop work before merging. Missing authored content and verified PYQs are not fabricated or automatically marked complete.

@@ -277,7 +277,7 @@ accent="violet"
 <StatsCard
 title="Current Level"
 value={level}
-subtitle={`${currentLevelXP}/100 XP progress`}
+subtitle={`${currentLevelXP}/500 XP progress`}
 icon="🏆"
 accent="amber"
 />
@@ -328,14 +328,14 @@ Current XP
 </p>
 
 <p className="mt-2 text-3xl font-black text-violet-300">
-{currentLevelXP}/100
+{currentLevelXP}/500
 </p>
 </div>
 </div>
 
 <div className="mt-8">
 <ProgressBar
-value={currentLevelXP}
+value={currentLevelXP/5}
 variant="primary"
 size="lg"
 showValue
