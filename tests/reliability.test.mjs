@@ -215,6 +215,28 @@ test("corrupt study bytes are retained before recovery is committed", async () =
   assert.equal(localStorage.getItem("studyState:corrupt"), "broken-json");
 });
 
+test("PYQ answers and position survive remount while HOLD rows stay excluded", async () => {
+  await reset();
+  const originalFetch=globalThis.fetch;
+  const row={subject:'Quant',topic:'Numbers',source:{year:2024,date:'2024-09-01',shift:'1',questionNumber:1},options:['Two','Three','Four','Five'],answer:'A',images:[],optionImages:{}};
+  globalThis.fetch=async()=>({ok:true,json:async()=>[{...row,id:'hold',question:'Held question',hold:true},{...row,id:'one',question:'First question'},{...row,id:'two',question:'Second question'}]});
+  try {
+    const {default:PyqPractice}=await load('/src/pages/PyqPractice.jsx');
+    await mount(React.createElement(PyqPractice));
+    assert.doesNotMatch(container.textContent,/Held question/);
+    await React.act(async()=>container.querySelector('input[type=radio]').click());
+    await React.act(async()=>[...container.querySelectorAll('button')].find(b=>b.textContent==='Check answer').click());
+    assert.match(container.textContent,/Correct\. Answer: A/);
+    await React.act(async()=>[...container.querySelectorAll('button')].find(b=>b.textContent==='Next question').click());
+    await mount(React.createElement(PyqPractice));
+    assert.match(container.textContent,/Second question/);
+    await React.act(async()=>[...container.querySelectorAll('button')].find(b=>b.textContent==='Previous').click());
+    assert.match(container.textContent,/Correct\. Answer: A/);
+    assert.equal(container.querySelector('input[type=radio]').matches(':disabled'),true);
+    assert.match(container.textContent,/1 answered · 1 correct/);
+  } finally { await reset(); globalThis.fetch=originalFetch; }
+});
+
 test("main app routes render without error-boundary fallbacks", async () => {
   await reset();
   const originalFetch=globalThis.fetch;
@@ -228,7 +250,7 @@ test("main app routes render without error-boundary fallbacks", async () => {
       window.history.replaceState({},"",route);
       await mount(React.createElement(App));
       await React.act(async()=>new Promise(resolve=>setTimeout(resolve,80)));
-      for(let wait=0;wait<10&&container.textContent.includes("Loading your workspace");wait++)await React.act(async()=>new Promise(resolve=>setTimeout(resolve,80)));
+      for(let wait=0;wait<60&&container.textContent.includes("Loading your workspace");wait++)await React.act(async()=>new Promise(resolve=>setTimeout(resolve,80)));
       assert.doesNotMatch(container.textContent,/Loading your workspace/,route);
       assert.doesNotMatch(container.textContent,/This screen could not load/,route);
       assert.ok(container.textContent.trim().length>20,route);

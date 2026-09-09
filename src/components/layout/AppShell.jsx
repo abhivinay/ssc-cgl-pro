@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { Menu, X, ShieldCheck } from "lucide-react";
+import { Menu, X, ShieldCheck, ArrowUpRight } from "lucide-react";
 import { useStudy } from "../../context/StudyContext";
 import Sidebar from "./Sidebar";
 import SentinelEntry from "./SentinelEntry";
@@ -18,6 +18,10 @@ export default function AppShell({ children }) {
   return <div className="app-shell"><a className="skip-link" href="#main-content">Skip to content</a><StorageNotice/>
     <header className="mobile-header"><Link to="/dashboard">SSC Sentinel</Link><button aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="app-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X/> : <Menu/>}</button></header>
     <div id="app-navigation" className={`app-navigation ${menuOpen ? "is-open" : ""}`}><Sidebar onNavigate={() => setMenuOpen(false)}/></div>
-    <main id="main-content" className="app-content" tabIndex={-1}><div key={pathname} className="route-content">{children}</div></main>
+    <main id="main-content" className="app-content" tabIndex={-1}>
+      <div className="workspace-bar"><span><span className="workspace-dot"/> YOUR STUDY WORKSPACE</span><Link to="/pyq-practice">Practice PYQs <ArrowUpRight size={16}/></Link></div>
+      <div key={pathname} className="route-content">{children}</div>
+      <footer className="workspace-footer"><span>Small steps. Lasting progress.</span><Link to="/settings">Data & recovery</Link></footer>
+    </main>
   </div>;
 }

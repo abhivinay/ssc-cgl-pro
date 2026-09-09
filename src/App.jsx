@@ -7,6 +7,7 @@ import AppShell from "./components/layout/AppShell";
 import AppErrorBoundary from "./components/layout/AppErrorBoundary";
 import PersistenceManager from "./components/layout/PersistenceManager";
 import Settings from "./pages/Settings";
+import "./styles/command.css";
 const Dashboard=lazy(()=>import("./pages/Dashboard"));
 const Syllabus=lazy(()=>import("./pages/Syllabus"));
 const Test=lazy(()=>import("./pages/Test"));
@@ -36,8 +37,8 @@ return(
 <AppErrorBoundary><PersistenceManager/><StudyProvider>
 <TestProvider>
 <XPToastProvider>
-<AchievementManager/>
 <BrowserRouter>
+<AchievementManager/>
 <AppShell><Suspense fallback={<p role="status" className="p-8">Loading your workspace…</p>}>
 <Routes>
 <Route path="/" element={<Navigate to="/dashboard" replace/>}/>

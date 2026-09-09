@@ -10,7 +10,7 @@ unlockAchievement
 
 export default function useAchievements(stats={}){
 
-const [unlockedIds,setUnlockedIds]=useState([]);
+const [unlockedIds,setUnlockedIds]=useState(()=>readAchievements());
 
 const achievementList=useMemo(
 ()=>getUnlockedAchievements(

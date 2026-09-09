@@ -10,5 +10,5 @@ export default function StorageNotice() {
     return () => window.removeEventListener(STORAGE_ERROR_EVENT, onError);
   }, []);
   const warning=message||(["offline","conflict"].includes(sync.phase)?sync.message:"");
-  return warning ? <aside role="alert" className="storage-notice">{warning} <a href="/settings">Open data recovery</a></aside> : null;
+  return warning ? <aside role="alert" className="storage-notice">{warning} <a href="/settings">Open data recovery</a><button type="button" onClick={()=>window.dispatchEvent(new Event('ssc-sync-retry'))}>Retry connection</button></aside> : null;
 }

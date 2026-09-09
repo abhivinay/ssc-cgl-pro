@@ -18,7 +18,7 @@ export function createProgressStore(directory) {
     mkdirSync(directory, { recursive: true, mode: 0o700 });
     const temporary = join(directory, "progress.next.json");
     writeFileSync(temporary, JSON.stringify(next), { mode: 0o600 });
-    const descriptor = openSync(temporary, "r");
+    const descriptor = openSync(temporary, "r+");
     try {
       fsyncSync(descriptor);
     } catch (error) {

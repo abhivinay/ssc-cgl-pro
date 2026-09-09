@@ -30,7 +30,11 @@ export function applyEntries(entries) {
 
 async function request(method = "GET", body) {
   const response = await fetch("/api/progress", { method, headers: { "Content-Type": "application/json" }, ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(10000) });
-  if (!response.ok) { const error = new Error(response.status === 409 ? "Another session has newer progress. Export this device's backup, then reload the server copy." : "Backend unavailable. Changes are cached on this device only. Start the server to save to disk."); error.status = response.status; throw error; }
+  if (!response.ok) {
+    let detail; try { detail = await response.json(); } catch { /* A proxy can return non-JSON errors. */ }
+    const error = new Error(response.status === 409 ? "Another session has newer progress. Export this device's backup, then reload the server copy." : `Progress could not be saved (HTTP ${response.status}). ${typeof detail?.error === 'string' ? detail.error : 'Check the backend connection.'} Your device copy is retained.`);
+    error.status = response.status; throw error;
+  }
   return response.json();
 }
 

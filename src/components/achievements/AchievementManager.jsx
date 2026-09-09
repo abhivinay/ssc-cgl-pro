@@ -3,8 +3,10 @@ import{useStudy}from"../../context/StudyContext";
 import useXP from"../../hooks/useXP";
 import useAchievements from"../../hooks/useAchievements";
 import AchievementPopup from"./AchievementPopup";
+import{useLocation}from"react-router-dom";
 
 export default function AchievementManager(){
+const{pathname}=useLocation();
 const{studyState}=useStudy();
 const{totalXP,level}=useXP();
 const[activeAchievement,setActiveAchievement]=useState(null);
@@ -56,10 +58,14 @@ setActiveAchievement(newlyUnlocked);
 }
 },[achievements]);
 
-return(
+let entered=false;
+try{entered=sessionStorage.getItem("ssc-sentinel-entered")==="1";}catch{/* Session storage is optional. */}
+const canNotify=entered&&studyState.brainTrainerCompleted&&pathname!=="/brain-trainer"&&pathname!=="/settings";
+
+return canNotify?(
 <AchievementPopup
 achievement={activeAchievement}
 onClose={()=>setActiveAchievement(null)}
 />
-);
+):null;
 }
