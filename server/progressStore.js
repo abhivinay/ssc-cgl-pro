@@ -19,7 +19,13 @@ export function createProgressStore(directory) {
     const temporary = join(directory, "progress.next.json");
     writeFileSync(temporary, JSON.stringify(next), { mode: 0o600 });
     const descriptor = openSync(temporary, "r");
-    try { fsyncSync(descriptor); } finally { closeSync(descriptor); }
+    try {
+      fsyncSync(descriptor);
+    } catch (error) {
+      // Some Windows filesystems and security tools reject fsync even after a
+      // successful write. The atomic rename below remains the recovery guard.
+      if (!["EPERM", "EINVAL", "ENOSYS"].includes(error?.code)) throw error;
+    } finally { closeSync(descriptor); }
     if (existsSync(file)) copyFileSync(file, previous);
     renameSync(temporary, file);
     return next;
