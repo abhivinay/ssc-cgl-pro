@@ -48,7 +48,7 @@ setCanClick(false);
 if(updated.round>=TOTAL_ROUNDS){
 
 const summary=
-finishGame();
+finishGame(updated);
 
 onComplete?.({
 correctAnswers:summary.correctAnswers,

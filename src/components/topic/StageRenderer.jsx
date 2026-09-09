@@ -4,6 +4,8 @@ import QuestionStage from"./QuestionStage";
 import TopicTestStage from"./TopicTestStage";
 import PYQStage from"./PYQStage";
 import RevisionStage from"./RevisionStage";
+import AuthoredLesson from "./AuthoredLesson";
+import AuthoredRevision from "./AuthoredRevision";
 
 const STAGE_LABELS={
 learn:"Learn",
@@ -59,6 +61,7 @@ const primaryLesson=getPrimaryLesson(content);
 
 switch(stage){
 case"learn":
+if(content.structuredLearn)return <AuthoredLesson content={content.learn}/>;
 if(primaryLesson){
 return(
 <LessonPlayer
@@ -86,10 +89,11 @@ content={content.learn}
 case"conceptCheck":
 return(
 <QuestionStage
+topicId={content.id} subject={content.subject}
 title={`${topicName} Concept Check`}
 description={`Test whether the core ${topicName} concepts are clear.`}
 questions={content.conceptCheck}
-passingPercentage={70}
+passingPercentage={content.passing?.conceptCheck||70}
 onComplete={result=>{
 if(result?.confirmed){
 onStageComplete?.({
@@ -105,10 +109,11 @@ topicId:content.id
 case"level1":
 return(
 <QuestionStage
+topicId={content.id} subject={content.subject}
 title={`${topicName} Level 1 Practice`}
 description={`Build confidence with basic SSC-pattern ${topicName} questions.`}
 questions={content.practice?.level1}
-passingPercentage={70}
+passingPercentage={content.passing?.level1||70}
 onComplete={result=>{
 if(result?.confirmed){
 onStageComplete?.({
@@ -124,10 +129,11 @@ topicId:content.id
 case"level2":
 return(
 <QuestionStage
+topicId={content.id} subject={content.subject}
 title={`${topicName} Level 2 Practice`}
 description={`Solve standard SSC-level ${topicName} questions with accuracy.`}
 questions={content.practice?.level2}
-passingPercentage={75}
+passingPercentage={content.passing?.level2||75}
 onComplete={result=>{
 if(result?.confirmed){
 onStageComplete?.({
@@ -143,10 +149,11 @@ topicId:content.id
 case"level3":
 return(
 <QuestionStage
+topicId={content.id} subject={content.subject}
 title={`${topicName} Level 3 Practice`}
 description={`Attempt advanced SSC ${topicName} questions and mixed applications.`}
 questions={content.practice?.level3}
-passingPercentage={80}
+passingPercentage={content.passing?.level3||80}
 onComplete={result=>{
 if(result?.confirmed){
 onStageComplete?.({
@@ -162,6 +169,8 @@ topicId:content.id
 case"topicTest":
 return(
 <TopicTestStage
+topicId={content.id}
+subject={content.subject}
 config={content.topicTest?.config}
 questions={content.topicTest?.questions}
 onComplete={result=>{
@@ -193,6 +202,7 @@ topicId:content.id
 );
 
 case"revision":
+if(content.revision&&!content.revision.summary)return <AuthoredRevision content={content.revision} onComplete={onStageComplete}/>;
 return(
 <RevisionStage
 content={content.revision}

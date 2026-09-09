@@ -36,10 +36,10 @@ createNextOddRound(previous)
 
 },[]);
 
-const finishGame=useCallback(()=>{
+const finishGame=useCallback((latestState=state)=>{
 
 const completed=
-completeOddGame(state);
+completeOddGame(latestState);
 
 const summary=
 getOddSummary(completed);

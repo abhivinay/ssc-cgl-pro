@@ -1,4 +1,5 @@
 import {useCallback,useEffect,useMemo,useState} from "react";
+import {subscribeStorage} from "../services/safeStorage";
 import {
 completeRevisionTask,
 getCompletedRevisions,
@@ -27,7 +28,7 @@ if(task.completed)return;
 const latestTasks=readRevisions();
 const latestTask=latestTasks.find(item=>item.id===task.id);
 
-if(!latestTask||latestTask.completed)return;
+if(!latestTask||latestTask.completed||latestTask.scheduledAt>Date.now())return;
 
 const completedTask=completeRevisionTask(latestTask);
 const nextTask=scheduleNextRevision(completedTask);
@@ -54,11 +55,15 @@ refresh();
 
 useEffect(()=>{
 const sync=()=>refresh();
+const unsubscribe=subscribeStorage(sync);
+const interval=setInterval(sync,60000);
 
 window.addEventListener("focus",sync);
 document.addEventListener("visibilitychange",sync);
 
 return()=>{
+unsubscribe();
+clearInterval(interval);
 window.removeEventListener("focus",sync);
 document.removeEventListener("visibilitychange",sync);
 };

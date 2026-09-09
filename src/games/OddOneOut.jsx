@@ -27,7 +27,7 @@ setSelected("");
 
 if(updated.round>=TOTAL_ROUNDS){
 
-const summary=finishGame();
+const summary=finishGame(updated);
 
 onComplete?.({
 correctAnswers:summary.correctAnswers,

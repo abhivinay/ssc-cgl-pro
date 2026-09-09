@@ -1,4 +1,4 @@
-import{useMemo}from"react";
+import{useEffect,useMemo,useState}from"react";
 import{useNavigate,useParams}from"react-router-dom";
 import{useStudy}from"../context/StudyContext";
 import Page from"../components/ui/Page";
@@ -7,8 +7,7 @@ import Badge from"../components/ui/Badge";
 import Button from"../components/ui/Button";
 import ProgressBar from"../components/ui/ProgressBar";
 import StageRenderer from"../components/topic/StageRenderer";
-import percentageContent from"../data/content/quant/percentage";
-import ancientHistoryContent from"../data/content/gk/ancient-history";
+import {loadTopicContent} from "../services/contentRegistry";
 const STAGE_LABELS={
 learn:"Learn",
 conceptCheck:"Concept Check",
@@ -78,38 +77,6 @@ english:"English Comprehension",
 gk:"General Awareness"
 };
 
-const getTopicContent=topic=>{
-if(!topic)return null;
-
-const topicId=String(topic.id||"").toLowerCase();
-const sourceId=String(topic.sourceId||"").toLowerCase();
-const topicName=String(topic.name||"").toLowerCase();
-const subject=String(topic.subject||"").toLowerCase();
-
-const isPercentage=
-topicId==="quant-percentage"||
-sourceId==="percentage"||
-topicName==="percentage";
-
-if(isPercentage){
-return percentageContent;
-}
-
-const isAncientHistory=
-subject==="gk"&&(
-topicId==="1"||
-topicId==="gk-1"||
-sourceId==="ancient-history"||
-topicName==="ancient history"
-);
-
-if(isAncientHistory){
-return ancientHistoryContent;
-}
-
-return null;
-};
-
 export default function TopicStage(){
 const navigate=useNavigate();
 const{topicId,stageId}=useParams();
@@ -150,10 +117,13 @@ String(item.name||item.topic||"").toLowerCase()==="percentage"
 );
 },[studyState.topics,topicId]);
 
-const topicContent=useMemo(
-()=>getTopicContent(topic),
-[topic]
-);
+const [loaded,setLoaded]=useState({id:null,content:null,error:null});
+useEffect(()=>{
+let cancelled=false;
+loadTopicContent(topic).then(content=>{if(!cancelled)setLoaded({id:topic?.id,content,error:null});}).catch(()=>{if(!cancelled)setLoaded({id:topic?.id,content:null,error:"Content could not load. Reload to retry."});});
+return()=>{cancelled=true;};
+},[topic?.id]);
+const topicContent=loaded.id===topic?.id?loaded.content:null;
 
 const stageIndex=stageList.indexOf(
 normalizedStage
@@ -184,13 +154,7 @@ stageIndex>0
 
 const previousComplete=
 stageIndex===0||
-Boolean(
-topic?.stages?.[previousStage]
-);
-
-const isDevelopmentPreview=
-import.meta.env.DEV&&
-String(topic?.name||"").toLowerCase()==="percentage";
+stageList.slice(0,stageIndex).every(stage=>topic?.stages?.[stage]);
 
 const stageAvailable=Boolean(
 topic&&
@@ -242,6 +206,7 @@ if(!result||!canComplete)return;
 completeStage(
 topic.id,
 normalizedStage
+ ,result
 );
 
 moveForward();
@@ -440,14 +405,14 @@ Topic content not connected
 </h2>
 
 <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-zinc-400">
-The learning system is currently connected to Percentage. This topic
-will become available after its SSC content module is completed.
+{loaded.id!==topic.id?"Loading topic content…":loaded.error||"This topic's authored content is not in the connected repository yet. It cannot be marked complete until content is supplied."}
 </p>
 </div>
 </GlassCard>
 ):(
 <>
 <StageRenderer
+key={`${topic.id}:${normalizedStage}`}
 stage={normalizedStage}
 content={topicContent}
 onStageComplete={handleRendererComplete}
@@ -549,16 +514,12 @@ topic.stages?.[stage]
 const active=
 stage===normalizedStage;
 
-const stagePrevious=
-index>0
-?stageList[index-1]
-:null;
 
 const available=
 Boolean(topic.unlocked)&&
 (
 index===0||
-Boolean(topic.stages?.[stagePrevious])
+stageList.slice(0,index).every(previous=>topic.stages?.[previous])
 );
 
 return(

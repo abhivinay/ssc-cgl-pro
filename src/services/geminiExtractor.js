@@ -1,5 +1,5 @@
 import{retry}from"../utils/retry";
-const ENDPOINT="http://localhost:5000/api/extract-pdf";
+const ENDPOINT="/api/extract-pdf";
 export async function extractPdfWithGemini(file,{signal,fileName,onProgress}={}){
 if(!(file instanceof Blob)){
 const error=new Error("Valid PDF file required");
@@ -21,6 +21,7 @@ onProgress
 }),
 {
 maxAttempts:3,
+signal,
 initialDelay:5000,
 factor:2,
 shouldRetry:error=>error.name!=="AbortError"&&error.retryable!==false,

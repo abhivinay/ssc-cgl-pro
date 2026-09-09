@@ -35,7 +35,7 @@ const base64=await blobToBase64(blob);
 let apiResponse;
 
 try{
-apiResponse=await fetch("http://localhost:5000/api/extract-question",{
+apiResponse=await fetch("/api/extract-question",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"

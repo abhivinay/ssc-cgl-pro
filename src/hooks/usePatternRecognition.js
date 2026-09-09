@@ -36,10 +36,10 @@ createNextPatternRound(previous)
 
 },[]);
 
-const finishGame=useCallback(()=>{
+const finishGame=useCallback((latestState=state)=>{
 
 const completed=
-completePatternGame(state);
+completePatternGame(latestState);
 
 const summary=
 getPatternSummary(completed);

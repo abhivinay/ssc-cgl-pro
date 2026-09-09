@@ -1,92 +1,29 @@
-const STORAGE_KEY="ssc-sentinel-xp";
+import { readJSON, writeJSON } from "./safeStorage";
 
-const DEFAULT_XP_STATE={
-totalXP:0,
-history:[]
-};
-
-export function readXP(){
-try{
-const data=localStorage.getItem(STORAGE_KEY);
-
-if(!data)return DEFAULT_XP_STATE;
-
-const parsed=JSON.parse(data);
-
-if(
-!parsed||
-typeof parsed!=="object"||
-typeof parsed.totalXP!=="number"||
-!Array.isArray(parsed.history)
-){
-localStorage.removeItem(STORAGE_KEY);
-return DEFAULT_XP_STATE;
+export function readXP() {
+  const study = readJSON("studyState", {});
+  const legacy = readJSON("ssc-sentinel-xp", {});
+  return {
+    totalXP: Math.max(0, Number(study.xp) || 0, study.schemaVersion === 2 ? 0 : Number(legacy.totalXP) || 0),
+    history: Array.isArray(study.xpHistory) ? study.xpHistory : Array.isArray(legacy.history) ? legacy.history : [],
+  };
 }
 
-return parsed;
-}catch(error){
-console.error("Failed to read XP storage:",error);
-localStorage.removeItem(STORAGE_KEY);
-return DEFAULT_XP_STATE;
-}
-}
-
-export function writeXP(state){
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(state)
-);
-
-return state;
+export function writeXP(state) {
+  const totalXP = Number(state.totalXP);
+  if (!Number.isFinite(totalXP) || totalXP < 0 || !Array.isArray(state.history)) throw new Error("Invalid XP state");
+  writeJSON("studyState", { ...readJSON("studyState", {}), schemaVersion: 2, xp: totalXP, xpHistory: state.history });
+  return state;
 }
 
-export function addXP({
-amount,
-reason,
-sourceId=null
-}){
-const state=readXP();
-
-const duplicate=sourceId&&state.history.some(
-item=>item.sourceId===sourceId
-);
-
-if(duplicate)return state;
-
-const entry={
-id:crypto.randomUUID(),
-amount,
-reason,
-sourceId,
-createdAt:Date.now()
-};
-
-const updated={
-totalXP:state.totalXP+amount,
-history:[entry,...state.history]
-};
-
-writeXP(updated);
-return updated;
+export function addXP({ amount, reason, sourceId = null }) {
+  const state = readXP();
+  if (!Number.isFinite(amount) || amount <= 0) return state;
+  if (sourceId && state.history.some(item => item.sourceId === sourceId)) return state;
+  const entry = { id: crypto.randomUUID(), amount, reason, sourceId, createdAt: Date.now() };
+  return writeXP({ totalXP: state.totalXP + amount, history: [entry, ...state.history] });
 }
 
-export function clearXP(){
-localStorage.removeItem(STORAGE_KEY);
-return DEFAULT_XP_STATE;
-}
-
-export function getXPHistory(limit){
-const history=readXP().history;
-
-return typeof limit==="number"
-?history.slice(0,limit)
-:history;
-}
-
-export default{
-readXP,
-writeXP,
-addXP,
-clearXP,
-getXPHistory
-};
+export const clearXP = () => writeXP({ totalXP: 0, history: [] });
+export const getXPHistory = limit => typeof limit === "number" ? readXP().history.slice(0, limit) : readXP().history;
+export default { readXP, writeXP, addXP, clearXP, getXPHistory };

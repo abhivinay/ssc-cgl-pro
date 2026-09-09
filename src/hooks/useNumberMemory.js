@@ -29,8 +29,8 @@ const nextRound=useCallback(()=>{
 setState(previous=>createNextRound(previous));
 },[]);
 
-const finishGame=useCallback(()=>{
-const completed=completeNumberMemory(state);
+const finishGame=useCallback((latestState=state)=>{
+const completed=completeNumberMemory(latestState);
 const summary=getNumberMemorySummary(completed);
 
 setState(completed);
