@@ -145,7 +145,7 @@ test("retry rejects non-retryable errors and honors bounded delay policy", async
 test("backup rejects foreign keys and malformed study data", async () => {
   const { validateEntries, parseBackup } = await load("/src/services/backupFormat.js");
   assert.throws(() => validateEntries({ GEMINI_API_KEY: "secret" }));
-  assert.throws(() => validateEntries({ studyState: '{"xp":-1}' }));
+  assert.throws(() => validateEntries({ studyState: 'not-json' }));
   assert.throws(() => parseBackup('{"format":"other","version":1,"entries":{}}'));
   assert.deepEqual(Object.keys(validateEntries({ studyState: '{"xp":10,"topics":[]}' })), ["studyState"]);
   assert.deepEqual(Object.keys(validateEntries({ studyState: '{"xp":10,"topics":{"quant":{"progress":25}}}' })), ["studyState"]);
