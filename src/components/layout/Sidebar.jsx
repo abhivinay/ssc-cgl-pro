@@ -43,19 +43,19 @@ return(
 <aside className="flex h-full w-72 flex-shrink-0 flex-col border-r border-zinc-800 bg-zinc-900">
 <div className="border-b border-zinc-800 p-6">
 <div className="flex items-center gap-3">
-<div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-300/10 text-cyan-200">
-<ShieldCheck size={27}/>
+<div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-3xl">
+🛡️
 </div>
 <div>
 <h1 className="text-2xl font-bold tracking-tight">SSC Sentinel</h1>
-<p className="text-sm text-zinc-500">Focus. Train. Study.</p>
+<p className="text-sm text-zinc-500">Your Personal Mentor</p>
 </div>
 </div>
 </div>
 
 <div className="border-b border-zinc-800 p-6">
 <div className="flex items-center gap-3">
-<div className="rounded-xl bg-amber-300/10 p-3 text-amber-200"><Target size={23}/></div>
+<div className="text-4xl">🔥</div>
 <div>
 <p className="text-sm text-zinc-400">Current Streak</p>
 <p className="text-3xl font-semibold">{studyState?.streak||0} days</p>
