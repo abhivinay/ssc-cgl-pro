@@ -489,9 +489,10 @@ export default function Analytics() {
 
                       <div className="flex h-44 w-full items-end justify-center rounded-lg border border-white/10 bg-black/20 px-2 py-2">
                         <div
-                          className="w-full max-w-10 rounded-xl    transition-all duration-700"
+                          className="activity-bar w-full max-w-10"
                           style={{
-                            height: `${height}%`,
+                            height: "100%",
+                            transform: `scaleY(${height / 100})`,
                           }}
                         />
                       </div>

@@ -173,7 +173,7 @@ export default function Planner() {
             type="button"
             disabled={!planner.topic}
             onClick={openTopic}
-            className="mt-6 rounded-lg bg-cyan-900 px-5 py-3 font-semibold transition hover:bg-cyan-900 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+            className="primary-btn mt-6 disabled:cursor-not-allowed"
           >
             Continue Topic
           </button>

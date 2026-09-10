@@ -35,17 +35,6 @@ const STAGE_DESCRIPTIONS = {
     "Review formulas, conversions, mistakes, flashcards and rapid questions.",
 };
 
-const STAGE_ICONS = {
-  learn: "",
-  conceptCheck: "",
-  level1: "",
-  level2: "",
-  level3: "",
-  topicTest: "",
-  pyq: "",
-  revision: "",
-};
-
 const ROUTE_TO_STAGE = {
   learn: "learn",
   conceptcheck: "conceptCheck",
@@ -274,7 +263,7 @@ export default function TopicStage() {
               </h1>
 
               <p className="mt-4 text-lg font-semibold text-cyan-200">
-                {STAGE_ICONS[normalizedStage]} {STAGE_LABELS[normalizedStage]}
+                {STAGE_LABELS[normalizedStage]}
               </p>
 
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 md:text-base">
@@ -413,7 +402,7 @@ export default function TopicStage() {
             )}
           </div>
 
-          <aside className="xl:sticky xl:top-6">
+          <aside className="topic-path xl:sticky xl:top-6">
             <GlassCard padding="p-0" className="relative overflow-hidden">
               <div className="relative p-6">
                 <Badge variant="info">Learning Path</Badge>
@@ -455,17 +444,9 @@ export default function TopicStage() {
                                 : "cursor-not-allowed border-zinc-800 bg-zinc-950/50 opacity-50"
                         }`}
                       >
-                        <div
-                          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${
-                            completed
-                              ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-200"
-                              : active
-                                ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-200"
-                                : "border-white/10 bg-white/[0.04]"
-                          }`}
-                        >
-                          {completed ? "" : available ? STAGE_ICONS[stage] : ""}
-                        </div>
+                        <span className="stage-number">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
 
                         <div className="min-w-0 flex-1">
                           <p className="font-semibold text-white">

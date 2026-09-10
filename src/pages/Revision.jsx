@@ -33,17 +33,18 @@ export default function Revision() {
 
 function Section({ title, tasks, buttonLabel, buttonAction }) {
   return (
-    <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+    <section className="revision-section">
       <h2 className="text-xl font-bold">{title}</h2>
 
       {tasks.length === 0 ? (
         <p className="mt-4 text-zinc-500">Nothing here.</p>
       ) : (
-        <div className="mt-5 space-y-4">
-          {tasks.map((task) => (
+        <div className="revision-list">
+          {tasks.map((task, index) => (
             <div
               key={task.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-950 p-5"
+              className="revision-item"
+              style={{ "--item-order": Math.min(index, 5) }}
             >
               <div>
                 <h3 className="font-semibold">{task.title}</h3>
@@ -63,7 +64,9 @@ function Section({ title, tasks, buttonLabel, buttonAction }) {
                 <button
                   type="button"
                   onClick={() => buttonAction(task)}
-                  className="rounded-xl bg-cyan-900 px-4 py-2 font-semibold hover:bg-cyan-900"
+                  className={
+                    index === 0 ? "primary-btn" : "button button-secondary"
+                  }
                 >
                   {buttonLabel}
                 </button>

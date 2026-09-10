@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useStudy } from "../../context/StudyContext";
 import TaskItem from "./TaskItem";
+import ProgressBar from "../ui/ProgressBar";
 
 const stageTitles = {
   learn: " Learn",
@@ -41,9 +42,7 @@ export default function MissionList() {
     <div className="card">
       <h2>{topic.name}</h2>
       <p>{progress}% Completed</p>
-      <div className="progress">
-        <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-      </div>
+      <ProgressBar value={progress} label="Mission completion" />
       {stageList.map((stage, index) => {
         const completed = Boolean(topic.stages?.[stage]);
         const previousComplete =

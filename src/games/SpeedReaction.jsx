@@ -58,6 +58,13 @@ export default function SpeedReaction({ difficulty = "easy", onComplete }) {
       ref={viewportRef}
       tabIndex={-1}
       data-game="SpeedReaction"
+      data-feedback={
+        state.lastResult?.valid === true
+          ? "correct"
+          : state.lastResult?.valid === false
+            ? "wrong"
+            : undefined
+      }
       className="rounded-lg border border-zinc-800 bg-zinc-900 p-5"
     >
       <div className="text-center">

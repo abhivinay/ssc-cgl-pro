@@ -16,7 +16,7 @@ test("redesign preserves the exact authoritative 20,600-question corpus", () => 
 
 test("shared text and action palette meets normal-text contrast", () => {
   const css = readFileSync(
-    new URL("../src/index.css", import.meta.url),
+    new URL("../src/styles/premium.css", import.meta.url),
     "utf8",
   );
   const tokens = Object.fromEntries(

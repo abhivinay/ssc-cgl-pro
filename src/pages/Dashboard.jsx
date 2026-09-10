@@ -1,3 +1,4 @@
+import AnimatedNumber from "../components/ui/AnimatedNumber";
 import { Link } from "react-router-dom";
 import { useStudy } from "../context/StudyContext";
 import useXP from "../hooks/useXP";
@@ -28,7 +29,10 @@ export default function Dashboard() {
         {[
           [
             "Study today",
-            Math.max(0, Number(dashboard.studyMinutes) || 0) + " min",
+            <AnimatedNumber
+              value={Math.max(0, Number(dashboard.studyMinutes) || 0)}
+              suffix=" min"
+            />,
             "Recorded study time",
           ],
           [
@@ -38,10 +42,14 @@ export default function Dashboard() {
           ],
           [
             "Current streak",
-            (dashboard.streak || 0) + " days",
+            <AnimatedNumber value={dashboard.streak || 0} suffix=" days" />,
             "Consecutive study days",
           ],
-          ["Revision queue", dueRevisions?.length || 0, "Scheduled for recall"],
+          [
+            "Revision queue",
+            <AnimatedNumber value={dueRevisions?.length || 0} />,
+            "Scheduled for recall",
+          ],
         ].map(([label, value, detail]) => (
           <div className="command-metric" key={label}>
             <span>{label}</span>
@@ -123,8 +131,23 @@ export default function Dashboard() {
                     aria-valuemin={0}
                     aria-valuemax={100}
                   >
-                    <i style={{ width: pct + "%" }} />
+                    <i
+                      style={{
+                        width: "100%",
+                        transform: "scaleX(" + pct / 100 + ")",
+                      }}
+                    />
                   </div>
+                  <span className="subject-insight">
+                    {list.find((t) => t.unlocked && !t.completed)?.name
+                      ? "Continue: " +
+                        list.find((t) => t.unlocked && !t.completed).name
+                      : done === list.length && list.length
+                        ? "All topics completed. Revisit the syllabus."
+                        : list.length -
+                          done +
+                          " topics remaining in this subject."}
+                  </span>
                 </Link>
               );
             })}
@@ -134,7 +157,9 @@ export default function Dashboard() {
               Level <strong>{level}</strong>
             </span>
             <div>
-              <strong>{totalXP.toLocaleString()} XP</strong>
+              <strong>
+                <AnimatedNumber value={totalXP} suffix=" XP" />
+              </strong>
               <small>{xpToNextLevel} XP to next level</small>
             </div>
           </div>

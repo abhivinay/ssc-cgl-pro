@@ -264,6 +264,13 @@ export default function MentalMath({
       ref={viewportRef}
       tabIndex={-1}
       data-game="MentalMath"
+      data-feedback={
+        feedback?.correct === true
+          ? "correct"
+          : feedback?.correct === false
+            ? "wrong"
+            : undefined
+      }
       className="surface-panel"
     >
       <header className="game-heading">

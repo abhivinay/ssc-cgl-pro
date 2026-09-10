@@ -1,3 +1,4 @@
+import AnimatedNumber from "../ui/AnimatedNumber";
 export default function BrainProgress({
   currentGame = 1,
   totalGames = 5,
@@ -50,7 +51,13 @@ export default function BrainProgress({
         ].map(([label, value]) => (
           <div key={label}>
             <dt>{label}</dt>
-            <dd>{value}</dd>
+            <dd>
+              {typeof value === "number" ? (
+                <AnimatedNumber value={value} />
+              ) : (
+                value
+              )}
+            </dd>
           </div>
         ))}
       </dl>

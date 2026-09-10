@@ -355,6 +355,7 @@ export default function ExamSession({
             : "Mark for review"}
         </Button>
         <Button
+          variant={confirmSubmit || index === normalized.length - 1 ? "secondary" : "primary"}
           disabled={index === normalized.length - 1}
           onClick={() => change(() => ({ currentIndex: index + 1 }))}
         >
@@ -392,7 +393,7 @@ export default function ExamSession({
           </div>
         </div>
       ) : (
-        <Button onClick={() => setConfirmSubmit(true)}>Submit Test</Button>
+        <Button variant={index === normalized.length - 1 ? "primary" : "secondary"} onClick={() => setConfirmSubmit(true)}>Submit Test</Button>
       )}
     </section>
   );

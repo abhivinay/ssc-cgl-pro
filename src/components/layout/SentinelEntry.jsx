@@ -15,13 +15,18 @@ export default function SentinelEntry({ onEnter }) {
       <div className="entry-layout">
         <section className="entry-copy">
           <p className="eyebrow">A deliberate start</p>
-          <h1>
+          <p className="entry-greeting">
             {hour < 12
               ? "Good morning"
               : hour < 17
                 ? "Good afternoon"
                 : "Good evening"}
             {studyState.name ? ", " + studyState.name : ""}.
+          </p>
+          <h1>
+            A quieter way
+            <br />
+            to <em>go further.</em>
           </h1>
           <p>Your preparation is ready. Continue to begin.</p>
           <button className="primary-btn" onClick={onEnter}>

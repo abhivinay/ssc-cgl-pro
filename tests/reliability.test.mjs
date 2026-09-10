@@ -568,6 +568,14 @@ test("PYQ answers and position survive remount while HOLD rows stay excluded", a
       container.querySelector("input[type=radio]").matches(":disabled"),
       true,
     );
+    const jump = container.querySelector("input[name=question]");
+    jump.value = "2";
+    await React.act(async () =>
+      jump.form.dispatchEvent(
+        new window.Event("submit", { bubbles: true, cancelable: true }),
+      ),
+    );
+    assert.match(container.textContent, /Second question/);
     assert.match(container.textContent, /1 answered · 1 correct/);
   } finally {
     await reset();
@@ -1361,15 +1369,13 @@ test("focus overlay traps keyboard focus, closes with Escape and restores its tr
   );
   assert.equal(document.activeElement, buttons.at(-1));
   await React.act(async () =>
-    buttons
-      .at(-1)
-      .dispatchEvent(
-        new window.KeyboardEvent("keydown", {
-          key: "Escape",
-          bubbles: true,
-          cancelable: true,
-        }),
-      ),
+    buttons.at(-1).dispatchEvent(
+      new window.KeyboardEvent("keydown", {
+        key: "Escape",
+        bubbles: true,
+        cancelable: true,
+      }),
+    ),
   );
   assert.equal(container.querySelector('[role="dialog"]'), null);
   assert.equal(document.activeElement, trigger);
@@ -1551,4 +1557,249 @@ test("daily Brain Trainer plays all five games in order, persists completion and
     await reset();
     t.mock.timers.reset();
   }
+});
+
+test("animated values settle, expose the final value accessibly and honor reduced motion", async () => {
+  await reset();
+  const { default: AnimatedNumber } = await load(
+    "/src/components/ui/AnimatedNumber.jsx",
+  );
+  const original = window.matchMedia;
+  const originalRAF = globalThis.requestAnimationFrame;
+  const originalCancel = globalThis.cancelAnimationFrame;
+  let reduced = false,
+    sequence = 0;
+  const frames = new Map(),
+    listeners = new Set();
+  window.matchMedia = () => ({
+    get matches() {
+      return reduced;
+    },
+    addEventListener(_, fn) {
+      listeners.add(fn);
+    },
+    removeEventListener(_, fn) {
+      listeners.delete(fn);
+    },
+  });
+  globalThis.requestAnimationFrame = (fn) => {
+    frames.set(++sequence, fn);
+    return sequence;
+  };
+  globalThis.cancelAnimationFrame = (id) => frames.delete(id);
+  const tick = (now) => {
+    const queued = [...frames.values()];
+    frames.clear();
+    queued.forEach((fn) => fn(now));
+  };
+  try {
+    await mount(
+      React.createElement(AnimatedNumber, { value: 10, suffix: " XP" }),
+    );
+    assert.equal(frames.size, 0, "initial display needs no animation");
+    await React.act(async () =>
+      root.render(
+        React.createElement(AnimatedNumber, { value: 40, suffix: " XP" }),
+      ),
+    );
+    assert.equal(container.firstChild.getAttribute("aria-label"), "40 XP");
+    tick(0);
+    tick(400);
+    assert.equal(container.textContent, "40 XP");
+    assert.equal(frames.size, 0, "animation ends without a persistent loop");
+    await React.act(async () =>
+      root.render(React.createElement(AnimatedNumber, { value: 80 })),
+    );
+    reduced = true;
+    listeners.forEach((fn) => fn());
+    assert.equal(frames.size, 0);
+    assert.equal(container.textContent, "80");
+    await React.act(async () =>
+      root.render(React.createElement(AnimatedNumber, { value: 90 })),
+    );
+    assert.equal(frames.size, 0);
+    assert.equal(container.textContent, "90");
+  } finally {
+    await reset();
+    window.matchMedia = original;
+    globalThis.requestAnimationFrame = originalRAF;
+    globalThis.cancelAnimationFrame = originalCancel;
+  }
+});
+
+test("ambient pointer work is batched, idle-free and disabled for touch or reduced motion", async () => {
+  await reset();
+  const { default: AmbientCanvas } = await load(
+    "/src/components/layout/AmbientCanvas.jsx",
+  );
+  const { MemoryRouter } = await load(
+    "/node_modules/react-router-dom/dist/index.mjs",
+  );
+  const original = window.matchMedia,
+    originalRAF = globalThis.requestAnimationFrame,
+    originalCancel = globalThis.cancelAnimationFrame;
+  let reduced = false,
+    next = 0;
+  const frames = new Map(),
+    listeners = new Set();
+  window.matchMedia = (query) => ({
+    get matches() {
+      return query.includes("reduced") ? reduced : true;
+    },
+    addEventListener(_, fn) {
+      listeners.add(fn);
+    },
+    removeEventListener(_, fn) {
+      listeners.delete(fn);
+    },
+  });
+  globalThis.requestAnimationFrame = (fn) => {
+    frames.set(++next, fn);
+    return next;
+  };
+  globalThis.cancelAnimationFrame = (id) => frames.delete(id);
+  try {
+    await mount(
+      React.createElement(
+        MemoryRouter,
+        null,
+        React.createElement(
+          AmbientCanvas,
+          null,
+          React.createElement(
+            "button",
+            { className: "primary-btn" },
+            "Continue",
+          ),
+        ),
+      ),
+    );
+    const button = container.querySelector("button"),
+      light = container.querySelector(".cursor-light");
+    const move = (type) => {
+      const event = new window.MouseEvent("pointermove", {
+        bubbles: true,
+        clientX: 20,
+        clientY: 30,
+      });
+      Object.defineProperty(event, "pointerType", { value: type });
+      button.dispatchEvent(event);
+    };
+    assert.equal(frames.size, 0);
+    move("touch");
+    assert.equal(frames.size, 0);
+    move("mouse");
+    move("mouse");
+    assert.equal(frames.size, 1);
+    const queued = [...frames.values()];
+    frames.clear();
+    queued.forEach((fn) => fn());
+    assert.equal(light.style.opacity, "1");
+    assert.equal(frames.size, 0);
+    reduced = true;
+    listeners.forEach((fn) => fn());
+    move("mouse");
+    assert.equal(frames.size, 0);
+    assert.equal(light.style.opacity, "0");
+    assert.equal(button.style.getPropertyValue("--magnet-x"), "");
+  } finally {
+    await reset();
+    window.matchMedia = original;
+    globalThis.requestAnimationFrame = originalRAF;
+    globalThis.cancelAnimationFrame = originalCancel;
+  }
+});
+
+test("native route transitions retain navigation and recover when the API fails", async () => {
+  await reset();
+  const { default: AmbientCanvas } = await load(
+    "/src/components/layout/AmbientCanvas.jsx",
+  );
+  const { MemoryRouter, Link, useLocation } = await load(
+    "/node_modules/react-router-dom/dist/index.mjs",
+  );
+  let current;
+  function LocationProbe() {
+    current = useLocation().pathname;
+    return React.createElement(Link, { to: "/notes" }, "Notes");
+  }
+  const original = document.startViewTransition;
+  try {
+    for (const fail of [false, true]) {
+      document.startViewTransition = (update) => {
+        if (fail) throw new Error("Unavailable");
+        update();
+        return { finished: Promise.resolve(), skipTransition() {} };
+      };
+      await mount(
+        React.createElement(
+          MemoryRouter,
+          { initialEntries: ["/dashboard"] },
+          React.createElement(
+            AmbientCanvas,
+            null,
+            React.createElement(LocationProbe),
+          ),
+        ),
+      );
+      await React.act(async () =>
+        container.querySelector("a").dispatchEvent(
+          new window.MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            button: 0,
+          }),
+        ),
+      );
+      assert.equal(current, "/notes");
+    }
+  } finally {
+    await reset();
+    if (original) document.startViewTransition = original;
+    else delete document.startViewTransition;
+  }
+});
+
+test("learning image dialog contains keyboard focus and restores the image trigger", async () => {
+  await reset();
+  const { default: LearnStage } = await load(
+    "/src/components/topic/LearnStage.jsx",
+  );
+  await mount(
+    React.createElement(LearnStage, {
+      content: {
+        sections: [
+          {
+            title: "Example",
+            visuals: [{ title: "Worked example", image: "/test-example.png" }],
+          },
+        ],
+      },
+    }),
+  );
+  const trigger = [...container.querySelectorAll("button")].find((button) =>
+    button.textContent.includes("Full Screen"),
+  );
+  trigger.focus();
+  await React.act(async () => trigger.click());
+  const dialog = container.querySelector("[role=dialog]");
+  assert.ok(dialog.contains(document.activeElement));
+  await React.act(async () =>
+    document.activeElement.dispatchEvent(
+      new window.KeyboardEvent("keydown", {
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      }),
+    ),
+  );
+  assert.ok(dialog.contains(document.activeElement));
+  await React.act(async () =>
+    document.dispatchEvent(
+      new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    ),
+  );
+  assert.equal(container.querySelector("[role=dialog]"), null);
+  assert.equal(document.activeElement, trigger);
+  await reset();
 });

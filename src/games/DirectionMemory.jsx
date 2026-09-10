@@ -65,6 +65,13 @@ export default function DirectionMemory({ difficulty = "easy", onComplete }) {
       ref={viewportRef}
       tabIndex={-1}
       data-game="DirectionMemory"
+      data-feedback={
+        state.lastResult?.correct === true
+          ? "correct"
+          : state.lastResult?.correct === false
+            ? "wrong"
+            : undefined
+      }
       className="rounded-lg border border-zinc-800 bg-zinc-900 p-5"
     >
       <div className="text-center">

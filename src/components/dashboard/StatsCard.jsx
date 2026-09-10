@@ -1,4 +1,5 @@
 import GlassCard from "../ui/GlassCard";
+import AnimatedNumber from "../ui/AnimatedNumber";
 
 export default function StatsCard({
   title,
@@ -40,7 +41,7 @@ export default function StatsCard({
           <p className="text-sm font-medium text-zinc-400">{title}</p>
 
           <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white">
-            {value}
+            {typeof value === "number" ? <AnimatedNumber value={value} /> : value}
           </h2>
 
           {subtitle && <p className="mt-3 text-sm text-zinc-500">{subtitle}</p>}

@@ -73,6 +73,14 @@ export default function PyqPractice() {
       ),
     [rows, subject, year, topic],
   );
+  const answeredCount = useMemo(
+    () =>
+      filtered.reduce(
+        (count, item) => count + Number(Boolean(attempts[item.id])),
+        0,
+      ),
+    [filtered, attempts],
+  );
   const safeIndex = Math.min(
     Math.max(0, Number(index) || 0),
     Math.max(0, filtered.length - 1),
@@ -102,7 +110,7 @@ export default function PyqPractice() {
   }
   const blocked = q?.visualUnavailable || imageFailed;
   return (
-    <div className="mx-auto max-w-4xl space-y-6 pb-10">
+    <div className="pyq-workspace">
       <header>
         <h1 className="text-3xl font-bold">Previous year questions</h1>
         <p className="mt-2 text-zinc-400">
@@ -114,7 +122,7 @@ export default function PyqPractice() {
           visuals cannot be answered here.
         </p>
       </header>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="pyq-filters">
         {[
           [
             "Subject",
@@ -183,12 +191,42 @@ export default function PyqPractice() {
       ) : !q ? (
         <p>No questions match these filters.</p>
       ) : (
-        <article className="space-y-5 rounded-lg border border-zinc-700 bg-zinc-900 p-5 sm:p-5">
+        <article className="pyq-question space-y-4">
           <p className="text-sm text-cyan-200">
             {safeIndex + 1} / {filtered.length.toLocaleString()} ·{" "}
             {q.source.date} · {q.source.shift} · Question{" "}
             {q.source.questionNumber}
           </p>
+          <div className="pyq-position">
+            <form
+              key={safeIndex}
+              onSubmit={(event) => {
+                event.preventDefault();
+                const n = Number(
+                  event.currentTarget.elements.namedItem("question").value,
+                );
+                if (Number.isInteger(n) && n >= 1 && n <= filtered.length)
+                  move(n - 1 - safeIndex);
+              }}
+            >
+              <label>
+                Go to question{" "}
+                <input
+                  name="question"
+                  aria-label="Go to question"
+                  type="number"
+                  min="1"
+                  max={filtered.length}
+                  defaultValue={safeIndex + 1}
+                  required
+                />
+              </label>
+              <button type="submit" className="secondary-btn">
+                Go
+              </button>
+            </form>
+            <span>{answeredCount} answered in these filters</span>
+          </div>
           <h2 className="whitespace-pre-wrap text-xl">{q.question}</h2>
           {q.images
             .filter((p) => !Object.values(q.optionImages).includes(p))
@@ -241,7 +279,7 @@ export default function PyqPractice() {
           </fieldset>
           {!shown ? (
             <button
-              className="rounded-xl bg-cyan-300 px-5 py-3 text-black disabled:opacity-40"
+              className="primary-btn"
               disabled={!choice || blocked}
               onClick={() => {
                 try {
@@ -264,12 +302,16 @@ export default function PyqPractice() {
               Check answer
             </button>
           ) : (
-            <p role="status" className="text-cyan-200">
+            <p
+              role="status"
+              data-answer={selected === q.answer ? "correct" : "wrong"}
+              className="text-cyan-200"
+            >
               {selected === q.answer ? "Correct." : "Incorrect."} Answer:{" "}
               {q.answer}. {q.options["ABCD".indexOf(q.answer)]}
             </p>
           )}
-          <div className="flex justify-between">
+          <nav aria-label="Question navigation">
             <button
               disabled={safeIndex === 0}
               className="p-3 disabled:opacity-40"
@@ -284,7 +326,7 @@ export default function PyqPractice() {
             >
               Next question
             </button>
-          </div>
+          </nav>
         </article>
       )}
     </div>

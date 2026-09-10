@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import GlassCard from "../ui/GlassCard";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
@@ -82,7 +82,7 @@ export default function LearnStage({ content }) {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="learn-reader space-y-6">
         <GlassCard padding="p-0" className="relative overflow-hidden">
           <div className="relative p-6 md:p-5">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -684,6 +684,12 @@ function VisualCard({ visual, onOpen }) {
 }
 
 function VisualModal({ visual, onClose }) {
+  const closeRef = useRef(null);
+  useEffect(() => {
+    const previous = document.activeElement;
+    closeRef.current?.focus();
+    return () => previous?.focus?.();
+  }, []);
   const labels = toArray(visual.labels);
 
   return (
@@ -691,6 +697,12 @@ function VisualModal({ visual, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label={visual.title}
+      onKeyDown={(event) => {
+        if (event.key === "Tab") {
+          event.preventDefault();
+          closeRef.current?.focus();
+        }
+      }}
       className="fixed inset-0 z-[100] overflow-y-auto bg-black/90 p-4  md:p-5"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
@@ -710,7 +722,7 @@ function VisualModal({ visual, onClose }) {
             </h3>
           </div>
 
-          <Button variant="secondary" onClick={onClose}>
+          <Button ref={closeRef} variant="secondary" onClick={onClose}>
             Close
           </Button>
         </div>

@@ -145,7 +145,7 @@ export default function Notes() {
           />
 
           <button
-            className="primary-btn self-end"
+            className={`${editingId ? "secondary-btn" : "primary-btn"} self-end`}
             onClick={saveNote}
             disabled={!selectedTopic || !text.trim()}
           >

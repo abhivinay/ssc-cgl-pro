@@ -1,3 +1,4 @@
+import AmbientCanvas from "./components/layout/AmbientCanvas";
 import{BrowserRouter,Routes,Route,Navigate}from"react-router-dom";
 import{StudyProvider}from"./context/StudyContext";
 import{TestProvider}from"./context/TestContext";
@@ -8,6 +9,7 @@ import AppErrorBoundary from "./components/layout/AppErrorBoundary";
 import PersistenceManager from "./components/layout/PersistenceManager";
 import Settings from "./pages/Settings";
 import "./styles/command.css";
+import "./styles/premium.css";
 const Dashboard=lazy(()=>import("./pages/Dashboard"));
 const Syllabus=lazy(()=>import("./pages/Syllabus"));
 const Test=lazy(()=>import("./pages/Test"));
@@ -39,7 +41,7 @@ return(
 <XPToastProvider>
 <BrowserRouter>
 <AchievementManager/>
-<AppShell><Suspense fallback={<p role="status" className="p-8">Loading your workspace…</p>}>
+<AmbientCanvas><AppShell><Suspense fallback={<p role="status" className="p-8">Loading your workspace…</p>}>
 <Routes>
 <Route path="/" element={<Navigate to="/dashboard" replace/>}/>
 <Route path="/dashboard" element={<Dashboard/>}/>
@@ -66,7 +68,7 @@ return(
 <Route path="/content-studio/review" element={<ReviewCenter/>}/>
 <Route path="/achievements" element={<Achievements/>}/>
 <Route path="*" element={<Navigate to="/dashboard" replace/>}/>
-</Routes></Suspense></AppShell>
+</Routes></Suspense></AppShell></AmbientCanvas>
 </BrowserRouter>
 </XPToastProvider>
 </TestProvider>

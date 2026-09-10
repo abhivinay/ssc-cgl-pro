@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 import { useStudy } from "../../context/StudyContext";
 import Sidebar from "./Sidebar";
 import SentinelEntry from "./SentinelEntry";
 import StorageNotice from "./StorageNotice";
 export default function AppShell({ children }) {
   const { pathname } = useLocation();
+  const navigationType = useNavigationType();
   const { studyState } = useStudy();
   const [entered, setEntered] = useState(() => {
     try {
@@ -106,7 +112,11 @@ export default function AppShell({ children }) {
           <span>Preparation workspace</span>
           <Link to="/pyq-practice">Open PYQ practice</Link>
         </div>
-        <div key={pathname} className="route-content">
+        <div
+          key={pathname}
+          className="route-content"
+          data-direction={navigationType === "POP" ? "back" : "forward"}
+        >
           {children}
         </div>
         <footer className="workspace-footer">

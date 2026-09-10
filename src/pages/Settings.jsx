@@ -82,6 +82,7 @@ export default function Settings() {
           records and rewards. PDFs and API keys are not included.
         </p>
         <Button
+          variant={backup || sync.phase === "conflict" ? "secondary" : "primary"}
           onClick={() => {
             try {
               downloadBackup();
@@ -115,7 +116,7 @@ export default function Settings() {
               {backup.createdAt || "unknown"}
             </p>
             <Button
-              variant="danger"
+              variant={sync.phase === "conflict" ? "secondary" : "primary"}
               onClick={() => {
                 try {
                   downloadBackup();

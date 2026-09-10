@@ -1,3 +1,4 @@
+import AnimatedNumber from "./AnimatedNumber";
 export default function StatCard({
   label,
   value,
@@ -17,7 +18,7 @@ export default function StatCard({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-lg border  p-6  ${
+      className={`stat-composition relative overflow-hidden p-6  ${
         accents[accent] || accents.violet
       } ${className}`}
     >
@@ -25,7 +26,13 @@ export default function StatCard({
         <div>
           <p className="text-sm font-medium text-zinc-400">{label}</p>
 
-          <p className="mt-3 text-3xl font-semibold text-white">{value}</p>
+          <p className="mt-3 text-3xl font-semibold text-white">
+            {typeof value === "number" ? (
+              <AnimatedNumber value={value} />
+            ) : (
+              value
+            )}
+          </p>
 
           {trendLabel && (
             <div className="mt-3 flex items-center gap-2 text-xs font-semibold">

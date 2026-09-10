@@ -1,3 +1,4 @@
+import AnimatedNumber from "./AnimatedNumber";
 export default function ProgressBar({
   value = 0,
   label,
@@ -12,7 +13,7 @@ export default function ProgressBar({
       {(label || showValue) && (
         <div className="data-progress-label">
           <span>{label}</span>
-          {showValue && <span>{progress}%</span>}
+          {showValue && <AnimatedNumber value={progress} suffix="%" />}
         </div>
       )}
       <div
@@ -23,7 +24,7 @@ export default function ProgressBar({
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        <div style={{ width: progress + "%" }} />
+        <div style={{ transform: "scaleX(" + progress / 100 + ")" }} />
       </div>
     </div>
   );
