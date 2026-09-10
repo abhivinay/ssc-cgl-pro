@@ -62,7 +62,7 @@ afterEach(() =>
   assert.deepEqual(browserErrors.splice(0), [], "No uncaught DOM event errors"),
 );
 const vite = await createServer({
-  server: { middlewareMode: true },
+  server: { middlewareMode: true, hmr: false },
   appType: "custom",
   logLevel: "error",
 });

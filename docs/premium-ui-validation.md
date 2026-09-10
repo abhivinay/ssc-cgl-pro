@@ -25,3 +25,10 @@ The browser runtime returned `No browser is available`, and browser discovery re
 - Frame-rate and GPU/CPU profiling on an ordinary Windows laptop.
 - Exhaustive visual confirmation of one primary action and absence of repetitive panels in every populated, empty, error, and dialog state.
 - Hosted production deployment and post-deployment checks; this task delivers a Git branch push, not a deployment.
+
+## Final persistence and test-harness check
+
+- Live `.ssc-data/progress.json` remained byte-for-byte identical to the pre-edit backup. Both existing frontend and backend servers remain running and return HTTP 200.
+- The SSR test server disables HMR to avoid a test-only port collision. All 49 tests passed again after this change. The malformed-JSON test intentionally logs a rejected request.
+- Windows backend-process restart persistence was tested using isolated temporary storage. A Windows OS reboot and browser restoration after reboot were not performed.
+- Live extraction remains unverified: the running backend reports `extractionConfigured: false`.
