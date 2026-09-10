@@ -88,9 +88,12 @@ startCurrentGame,
 isSessionComplete
 ]);
 
-useEffect(()=>{
+const activeGameId=session?.activeGame?.id;
+const[previousGameId,setPreviousGameId]=useState(activeGameId);
+if(previousGameId!==activeGameId){
+setPreviousGameId(activeGameId);
 setLiveGameStats(EMPTY_LIVE_STATS);
-},[session?.activeGame?.id]);
+}
 
 const handleGameComplete=result=>{
 finishCurrentGame({...result,gameId:session?.activeGame?.id});

@@ -163,7 +163,7 @@ return res.status(parsed.status).json(parsed.body);
 function normalizeDate(value){
 const text=String(value||"").trim();
 if(!text)return"";
-const match=text.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{4})/);
+const match=text.match(/(\d{1,2})[/\-. ](\d{1,2})[/\-. ](\d{4})/);
 if(!match)return text;
 const day=match[1].padStart(2,"0");
 const month=match[2].padStart(2,"0");
@@ -479,7 +479,7 @@ data:pdfBase64
 let extracted;
 try{
 extracted=extractJson(response.text);
-}catch(error){
+}catch{
 console.error("Invalid Gemini PDF JSON:",cleanModelText(response.text).slice(0,1000));
 return res.status(422).json({
 error:"Gemini returned invalid PDF JSON. Retry this paper.",
@@ -514,6 +514,8 @@ return sendParsedError(res,error);
 }
 });
 app.use((error,req,res,next)=>{
+// Express identifies error middleware by its four-argument signature.
+void next;
 console.error("Server error:",error);
 if(error?.type==="entity.parse.failed")return res.status(400).json({error:"Invalid JSON request",retryable:false});
 if(error?.type==="entity.too.large"){

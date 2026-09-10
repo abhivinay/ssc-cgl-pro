@@ -1,5 +1,5 @@
 import{useEffect,useMemo,useRef,useState}from"react";
-import{AlertCircle,CheckCircle2,FileText,Pause,Play,RefreshCw,Sparkles,Square,Trash2}from"lucide-react";
+import{AlertCircle,FileText,Pause,Play,RefreshCw,Sparkles,Square,Trash2}from"lucide-react";
 import{extractPdfWithGemini}from"../../services/geminiExtractor";
 import ExtractionQueue from"./ExtractionQueue";
 import ExtractionPreview from"./ExtractionPreview";
@@ -27,26 +27,26 @@ return[];
 }
 };
 const writeSaved=items=>{
-const serializable=items.map(({blob,...item})=>item);
+const serializable=items.map(item=>Object.fromEntries(Object.entries(item).filter(([key])=>key!=="blob")));
 localStorage.setItem(STORAGE_KEY,JSON.stringify(serializable));
 };
-export default function GeminiExtractor({files=[]}){
+const EMPTY_FILES=[];
+export default function GeminiExtractor({files=EMPTY_FILES}){
 const abortRef=useRef(null);
 const runningRef=useRef(false);
 const queueRef=useRef([]);
-const[queue,setQueue]=useState([]);
+const[queue,setQueue]=useState(()=>readSaved().map(item=>({...item,blob:files.find(file=>file.id===item.id)?.blob||null})));
 const[selectedIds,setSelectedIds]=useState([]);
 const[previewId,setPreviewId]=useState(null);
 const[processing,setProcessing]=useState(false);
 const[paused,setPaused]=useState(false);
 const[error,setError]=useState("");
-useEffect(()=>{
-const saved=readSaved();
-setQueue(saved.map(item=>({...item,blob:files.find(file=>file.id===item.id)?.blob||null})));
-},[]);
-useEffect(()=>{
+
+const[previousFiles,setPreviousFiles]=useState(files);
+if(previousFiles!==files){
+setPreviousFiles(files);
 setQueue(current=>current.map(item=>({...item,blob:item.blob||files.find(file=>file.id===item.id)?.blob||null})));
-},[files]);
+}
 useEffect(()=>{
 queueRef.current=queue;
 writeSaved(queue);

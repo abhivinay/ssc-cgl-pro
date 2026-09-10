@@ -32,7 +32,7 @@ const [selected,setSelected]=useState({});
 const [checked,setChecked]=useState(false);
 const [submitting,setSubmitting]=useState(false);
 
-const startTime=useRef(Date.now());
+const startTime=useRef(null);
 const onResultRef=useRef(onResult);
 
 useEffect(()=>{
@@ -69,10 +69,15 @@ safeQuestions.every((_,index)=>
 Object.prototype.hasOwnProperty.call(selected,index)
 );
 
-useEffect(()=>{
+const resetKey=JSON.stringify([topicId,difficulty,title,questionSetKey]);
+const[previousKey,setPreviousKey]=useState(resetKey);
+if(previousKey!==resetKey){
+setPreviousKey(resetKey);
 setSelected({});
 setChecked(false);
 setSubmitting(false);
+}
+useEffect(()=>{
 startTime.current=Date.now();
 onResultRef.current?.(null);
 },[

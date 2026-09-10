@@ -23,11 +23,11 @@ const[currentIndex,setCurrentIndex]=useState(0);
 const[finished,setFinished]=useState(false);
 const[selectedVisual,setSelectedVisual]=useState(null);
 
-const startedAtRef=useRef(Date.now());
+const[startedAt]=useState(()=>Date.now());
+const startedAtRef=useRef(startedAt);
+const[timeSpentSeconds,setTimeSpentSeconds]=useState(1);
 
 const currentCard=cards[currentIndex]||null;
-
-const totalCards=Math.max(1,cards.length);
 
 const progress=cards.length
 ?Math.round(
@@ -43,16 +43,11 @@ Number(lesson?.xpReward)||0
 ),
 cardsCompleted:cards.length,
 totalCards:cards.length,
-timeSpentSeconds:Math.max(
-1,
-Math.round(
-(Date.now()-startedAtRef.current)/1000
-)
-)
+timeSpentSeconds
 }),[
 cards.length,
 lesson?.xpReward,
-finished
+timeSpentSeconds
 ]);
 
 const goPrevious=()=>{
@@ -66,6 +61,7 @@ const isLast=
 currentIndex>=cards.length-1;
 
 if(isLast){
+setTimeSpentSeconds(Math.max(1,Math.round((Date.now()-startedAtRef.current)/1000)));
 setFinished(true);
 return;
 }
@@ -80,6 +76,7 @@ setCurrentIndex(0);
 setFinished(false);
 setSelectedVisual(null);
 startedAtRef.current=Date.now();
+setTimeSpentSeconds(1);
 };
 
 const continueLesson=()=>{

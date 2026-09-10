@@ -1,4 +1,4 @@
-import{useEffect,useMemo,useState}from"react";
+import{useMemo,useState}from"react";
 import{useStudy}from"../../context/StudyContext";
 import useXP from"../../hooks/useXP";
 import useAchievements from"../../hooks/useAchievements";
@@ -48,7 +48,9 @@ totalXP
 
 const{achievements}=useAchievements(stats);
 
-useEffect(()=>{
+const[previousAchievements,setPreviousAchievements]=useState(null);
+if(previousAchievements!==achievements){
+setPreviousAchievements(achievements);
 const newlyUnlocked=achievements.find(
 achievement=>achievement.newlyUnlocked
 );
@@ -56,7 +58,7 @@ achievement=>achievement.newlyUnlocked
 if(newlyUnlocked){
 setActiveAchievement(newlyUnlocked);
 }
-},[achievements]);
+}
 
 let entered=false;
 try{entered=sessionStorage.getItem("ssc-sentinel-entered")==="1";}catch{/* Session storage is optional. */}

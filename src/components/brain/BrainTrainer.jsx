@@ -1,4 +1,4 @@
-import{useCallback,useEffect,useMemo,useState}from"react";
+import{useCallback,useEffect,useState}from"react";
 import{useStudy}from"../../context/StudyContext";
 
 const PUZZLES=[
@@ -18,48 +18,24 @@ const getToday=()=>new Date().toISOString().slice(0,10);
 
 export default function BrainTrainer(){
 const{studyState,completeBrainTrainer}=useStudy();
-const[daily,setDaily]=useState([]);
-const[index,setIndex]=useState(0);
-const[answer,setAnswer]=useState("");
-const[score,setScore]=useState(0);
-const[timeLeft,setTimeLeft]=useState(600);
-const[finished,setFinished]=useState(Boolean(studyState.brainTrainerCompleted));
-
-useEffect(()=>{
-const today=getToday();
-
+const[initial]=useState(()=>{
 try{
 const saved=JSON.parse(localStorage.getItem("brainDaily"));
+if(saved?.date===getToday()&&Array.isArray(saved.puzzles))return saved;
+}catch{/* Ignore malformed legacy cache when initializing the session. */}
+return{puzzles:[...PUZZLES].sort(()=>Math.random()-0.5).slice(0,5),index:0,score:0,timeLeft:600,finished:false};
+});
+const[daily]=useState(initial.puzzles);
+const[index,setIndex]=useState(Number(initial.index)||0);
+const[answer,setAnswer]=useState("");
+const[score,setScore]=useState(Number(initial.score)||0);
+const[timeLeft,setTimeLeft]=useState(Math.max(0,Number.isFinite(Number(initial.timeLeft))?Number(initial.timeLeft):600));
+const[sessionFinished,setFinished]=useState(Boolean(initial.finished));
+const finished=sessionFinished||Boolean(studyState.brainTrainerCompleted);
 
-if(saved?.date===today&&Array.isArray(saved.puzzles)){
-setDaily(saved.puzzles);
-setIndex(Number(saved.index)||0);
-setScore(Number(saved.score)||0);
-setTimeLeft(Math.max(0,Number(saved.timeLeft) || 600));
-setFinished(Boolean(saved.finished)||Boolean(studyState.brainTrainerCompleted));
-return;
-}
-}catch{
-localStorage.removeItem("brainDaily");
-}
-
-const puzzles=[...PUZZLES].sort(()=>Math.random()-0.5).slice(0,5);
-
-setDaily(puzzles);
-setIndex(0);
-setScore(0);
-setTimeLeft(600);
-setFinished(Boolean(studyState.brainTrainerCompleted));
-
-localStorage.setItem("brainDaily",JSON.stringify({
-date:today,
-puzzles,
-index:0,
-score:0,
-timeLeft:600,
-finished:Boolean(studyState.brainTrainerCompleted)
-}));
-},[studyState.brainTrainerCompleted]);
+useEffect(()=>{
+localStorage.setItem("brainDaily",JSON.stringify({date:getToday(),puzzles:daily,index,score,timeLeft,finished}));
+},[daily,index,score,timeLeft,finished]);
 
 const finishSession=useCallback(finalScore=>{
 const safeScore=Math.max(0,Number(finalScore)||0);
@@ -85,30 +61,16 @@ useEffect(()=>{
 if(finished||daily.length===0)return;
 
 const timer=setInterval(()=>{
-setTimeLeft(previous=>{
-if(previous<=1){
-clearInterval(timer);
+if(timeLeft<=1){
+setTimeLeft(0);
 finishSession(score);
-return 0;
+}else{
+setTimeLeft(timeLeft-1);
 }
-
-const next=previous-1;
-
-localStorage.setItem("brainDaily",JSON.stringify({
-date:getToday(),
-puzzles:daily,
-index,
-score,
-timeLeft:next,
-finished:false
-}));
-
-return next;
-});
 },1000);
 
 return()=>clearInterval(timer);
-},[daily,finished,finishSession,index,score]);
+},[daily,finished,finishSession,index,score,timeLeft]);
 
 const submit=()=>{
 if(!daily[index]||finished)return;
@@ -140,7 +102,7 @@ finished:false
 
 const minutes=Math.floor(timeLeft/60);
 const seconds=String(timeLeft%60).padStart(2,"0");
-const best=useMemo(()=>Number(localStorage.getItem("brainBest"))||score,[finished,score]);
+const best=Number(localStorage.getItem("brainBest"))||score;
 
 if(daily.length===0)return<div className="card">Loading Brain Trainer...</div>;
 

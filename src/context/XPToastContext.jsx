@@ -43,6 +43,7 @@ return(
 );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- This hook shares the provider's context; edits here require a full reload.
 export function useXPToast(){
 const context=useContext(XPToastContext);
 

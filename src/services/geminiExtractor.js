@@ -101,7 +101,7 @@ connectionError.retryAfter=5;
 throw connectionError;
 }
 onProgress?.(75);
-let data={};
+let data;
 try{
 data=await response.json();
 }catch{

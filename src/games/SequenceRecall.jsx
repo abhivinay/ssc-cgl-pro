@@ -18,10 +18,13 @@ finishGame
 const[memorize,setMemorize]=useState(true);
 const[selected,setSelected]=useState([]);
 
-useEffect(()=>{
-
+const[previousRound,setPreviousRound]=useState(state.round);
+if(previousRound!==state.round){
+setPreviousRound(state.round);
 setMemorize(true);
 setSelected([]);
+}
+useEffect(()=>{
 
 const timer=setTimeout(()=>{
 setMemorize(false);
@@ -44,10 +47,11 @@ const unique=[
 ...new Set(values)
 ];
 
-return unique.sort(()=>Math.random()-0.5);
+return state.challenge.options||unique;
 
 },[
-state.challenge.sequence
+state.challenge.sequence,
+state.challenge.options
 ]);
 
 const toggle=item=>{

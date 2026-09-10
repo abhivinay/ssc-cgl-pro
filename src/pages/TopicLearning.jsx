@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState} from "react";
+import {useMemo,useState} from "react";
 import {useNavigate,useParams} from "react-router-dom";
 import {useStudy} from "../context/StudyContext";
 import {getTopicContent} from "../data/topicContent";
@@ -19,7 +19,6 @@ import {
 LEARNING_STATUS,
 calculateTopicProgress,
 canCompleteStage,
-getCompletedStages,
 getStageStatus,
 markStageComplete
 } from "../core/learning/learningEngine";
@@ -193,9 +192,12 @@ const progress=useMemo(
 [topic,extendedProgress]
 );
 
-useEffect(()=>{
+const assessmentKey=JSON.stringify([stage,topicId]);
+const[previousAssessmentKey,setPreviousAssessmentKey]=useState(assessmentKey);
+if(previousAssessmentKey!==assessmentKey){
+setPreviousAssessmentKey(assessmentKey);
 setAssessmentResult(null);
-},[stage,topicId]);
+}
 
 if(!topic){
 return(

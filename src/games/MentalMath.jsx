@@ -186,8 +186,9 @@ const[wrongAnswers,setWrongAnswers]=useState(0);
 const[feedback,setFeedback]=useState(null);
 const[finished,setFinished]=useState(false);
 
-const startedAtRef=useRef(Date.now());
-const questionStartedAtRef=useRef(Date.now());
+const[startedAt]=useState(()=>Date.now());
+const startedAtRef=useRef(startedAt);
+const questionStartedAtRef=useRef(startedAt);
 const reactionTimesRef=useRef([]);
 const completedRef=useRef(false);
 const inputRef=useRef(null);

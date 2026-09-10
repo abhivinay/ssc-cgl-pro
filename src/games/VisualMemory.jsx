@@ -19,10 +19,14 @@ const[selected,setSelected]=useState([]);
 const[submitting,setSubmitting]=useState(false);
 const completedRef=useRef(false);
 
-useEffect(()=>{
+const[previousRound,setPreviousRound]=useState(state.round);
+if(previousRound!==state.round){
+setPreviousRound(state.round);
 setRevealed(true);
 setSelected([]);
 setSubmitting(false);
+}
+useEffect(()=>{
 
 const timer=setTimeout(()=>{
 setRevealed(false);

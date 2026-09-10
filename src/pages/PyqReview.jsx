@@ -114,13 +114,13 @@ return questions;
 const currentQuestion=filteredQuestions[currentIndex]||null;
 
 
-useEffect(()=>{
-if(currentIndex>=filteredQuestions.length)setCurrentIndex(0);
-},[filteredQuestions.length,currentIndex]);
+if(currentIndex>0&&currentIndex>=filteredQuestions.length)setCurrentIndex(0);
 
-useEffect(()=>{
+const[previousIndex,setPreviousIndex]=useState(currentIndex);
+if(previousIndex!==currentIndex){
+setPreviousIndex(currentIndex);
 setImageZoomed(false);
-},[currentIndex]);
+}
 
 useEffect(()=>{
 if(!questions.length)return;

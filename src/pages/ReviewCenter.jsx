@@ -1,4 +1,4 @@
-import{useEffect,useMemo,useState}from"react";
+import{useMemo,useState}from"react";
 import{CheckCircle2,ChevronLeft,ChevronRight,Clock3,Download,Search,ShieldCheck,ThumbsDown,Trash2}from"lucide-react";
 import useReviewCenter from"../hooks/useReviewCenter";
 import {canApproveQuestion} from "../services/reviewStorage";
@@ -48,15 +48,15 @@ item.source.toLowerCase().includes(query))
 const currentIndex=filtered.findIndex(item=>item.id===activeId);
 const current=filtered[currentIndex]||filtered[0]||null;
 
-useEffect(()=>{
 if(filtered.length&&!filtered.some(item=>item.id===activeId)){
 setActiveId(filtered[0].id);
 }
-},[activeId,filtered]);
 
-useEffect(()=>{
+const[previousQuestions,setPreviousQuestions]=useState(questions);
+if(previousQuestions!==questions){
+setPreviousQuestions(questions);
 setSelected(ids=>ids.filter(id=>questions.some(item=>item.id===id)));
-},[questions]);
+}
 
 function patch(updates){
 if(updates.reviewStatus==="approved"&&!canApproveQuestion({...current,...updates})){window.alert("Add the question, four options, answer key, subject and topic before approval.");return;}

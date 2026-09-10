@@ -18,9 +18,12 @@ finishGame
 
 const[canClick,setCanClick]=useState(false);
 
-useEffect(()=>{
-
+const[previousRound,setPreviousRound]=useState(state.challenge.id);
+if(previousRound!==state.challenge.id){
+setPreviousRound(state.challenge.id);
 setCanClick(false);
+}
+useEffect(()=>{
 
 const timer=setTimeout(()=>{
 

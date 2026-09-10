@@ -137,7 +137,7 @@ return`${year}-${month}-${day}`;
 };
 
 const createDailyMissionPlan=(topics,date=getTodayKey())=>{
-let generated=[];
+let generated;
 
 try{
 const result=missionGenerator(topics);
@@ -477,11 +477,7 @@ completedTopics=[...completedTopics,completedTopic.id];
 }
 }
 
-let streakResult={
-streak:Number(previous.streak)||0,
-best:Number(previous.bestStreak)||0,
-increased:false
-};
+let streakResult;
 
 try{
 streakResult=updateStreak();
@@ -753,6 +749,7 @@ return(
 );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- This hook shares the provider's context; edits here require a full reload.
 export function useStudy(){
 const context=useContext(StudyContext);
 

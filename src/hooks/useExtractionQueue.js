@@ -1,8 +1,8 @@
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useState} from "react";
 import ExtractionQueue from "../services/extractionQueue";
 
 export default function useExtractionQueue(initialItems=[]){
-const queueRef=useRef(new ExtractionQueue([]));
+const [queue]=useState(()=>new ExtractionQueue([]));
 const [,setVersion]=useState(0);
 
 function refresh(){
@@ -10,11 +10,12 @@ setVersion(version=>version+1);
 }
 
 useEffect(()=>{
-queueRef.current.syncItems(initialItems);
+queue.syncItems(initialItems);
+// eslint-disable-next-line react-hooks/set-state-in-effect -- Publish the external queue snapshot after synchronization.
 refresh();
-},[initialItems]);
+},[initialItems,queue]);
 
-const queue=queueRef.current;
+
 
 function start(){
 queue.start();

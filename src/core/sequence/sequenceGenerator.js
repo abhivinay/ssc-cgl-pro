@@ -102,6 +102,7 @@ typeof crypto.randomUUID==="function"
 difficulty:safeDifficulty,
 category,
 sequence,
+options:shuffle(sequence),
 displayDuration:
 safeDifficulty==="easy"
 ?3000

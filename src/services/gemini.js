@@ -54,7 +54,7 @@ error.retryAfter=5;
 throw error;
 }
 
-let data={};
+let data;
 
 try{
 data=await apiResponse.json();

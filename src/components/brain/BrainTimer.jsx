@@ -16,7 +16,11 @@ const remaining=String(safeSeconds%60).padStart(2,"0");
 return`${minutes}:${remaining}`;
 };
 
-export default function BrainTimer({
+export default function BrainTimer(props){
+return <BrainTimerSession key={clampDuration(props.duration??60)} {...props}/>;
+}
+
+function BrainTimerSession({
 duration=60,
 running=true,
 onComplete,
@@ -36,10 +40,6 @@ useEffect(()=>{
 onTickRef.current=onTick;
 },[onTick]);
 
-useEffect(()=>{
-setTimeLeft(safeDuration);
-completedRef.current=false;
-},[safeDuration]);
 
 useEffect(()=>{
 if(!running||completedRef.current)return;
@@ -51,11 +51,9 @@ return;
 }
 
 const timer=setTimeout(()=>{
-setTimeLeft(previous=>{
-const next=Math.max(0,previous-1);
+const next=Math.max(0,timeLeft-1);
+setTimeLeft(next);
 onTickRef.current?.(next);
-return next;
-});
 },1000);
 
 return()=>clearTimeout(timer);

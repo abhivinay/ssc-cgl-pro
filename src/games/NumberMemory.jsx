@@ -21,9 +21,12 @@ const transitionRef=useRef(null);
 const submittedRound=useRef(null);
 useEffect(()=>()=>clearTimeout(transitionRef.current),[]);
 
-useEffect(()=>{
-
+const[previousRound,setPreviousRound]=useState(state.round);
+if(previousRound!==state.round){
+setPreviousRound(state.round);
 setShowNumber(true);
+}
+useEffect(()=>{
 
 const timer=setTimeout(()=>{
 

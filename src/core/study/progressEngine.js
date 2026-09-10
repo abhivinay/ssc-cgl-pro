@@ -146,7 +146,7 @@ return STAGES.map((stage,index)=>({
 stage,
 index,
 completed:Boolean(stages[stage]),
-progress:Boolean(stages[stage])
+progress:stages[stage]
 ?100
 :0
 }));

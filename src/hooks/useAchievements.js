@@ -20,9 +20,6 @@ unlockedIds
 [stats,unlockedIds]
 );
 
-useEffect(()=>{
-setUnlockedIds(readAchievements());
-},[]);
 
 useEffect(()=>{
 const newlyUnlocked=achievementList.filter(
@@ -45,9 +42,10 @@ updated.push(item.id);
 }
 });
 
+// eslint-disable-next-line react-hooks/set-state-in-effect -- Publish the IDs committed to achievement storage above.
 setUnlockedIds(updated);
 
-},[achievementList]);
+},[achievementList,unlockedIds]);
 
 return{
 achievements:achievementList,

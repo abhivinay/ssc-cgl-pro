@@ -257,3 +257,38 @@ test("main app routes render without error-boundary fallbacks", async () => {
     }
   }finally{await reset();globalThis.fetch=originalFetch;}
 });
+
+test("brain timer ticks once in StrictMode and resets when its duration changes", async () => {
+  await reset();
+  const { default: BrainTimer } = await load("/src/components/brain/BrainTimer.jsx");
+  const ticks = [];
+  const element = duration => React.createElement(React.StrictMode, null,
+    React.createElement(BrainTimer, { duration, onTick: value => ticks.push(value) }));
+  await mount(element(5));
+  await React.act(async () => new Promise(resolve => setTimeout(resolve, 1100)));
+  assert.deepEqual(ticks, [4]);
+  assert.match(container.textContent, /0:04/);
+  await React.act(async () => root.render(element(9)));
+  assert.match(container.textContent, /0:09/);
+});
+
+test("PYQ visual failures block saving and clear when moving to another question", async () => {
+  await reset();
+  const originalFetch = globalThis.fetch;
+  const row = { subject: 'Quant', topic: 'Numbers', source: { year: 2024 }, options: ['1', '2', '3', '4'], answer: 'A', optionImages: {} };
+  globalThis.fetch = async () => ({ ok: true, json: async () => [
+    { ...row, id: 'figure', question: 'Synthetic figure question', images: ['fixture.png'] },
+    { ...row, id: 'text', question: 'Synthetic text question', images: [] },
+  ] });
+  try {
+    const { default: PyqPractice } = await load('/src/pages/PyqPractice.jsx');
+    await mount(React.createElement(PyqPractice));
+    await React.act(async () => container.querySelector('img').dispatchEvent(new Event('error')));
+    assert.equal(container.querySelector('fieldset').disabled, true);
+    assert.equal(localStorage.getItem('ssc-pyq-attempts'), null);
+    await React.act(async () => [...container.querySelectorAll('button')].find(b => b.textContent === 'Next question').click());
+    assert.equal(container.querySelector('fieldset').disabled, false);
+    assert.doesNotMatch(container.textContent, /Required visual content is unavailable/);
+    assert.equal(container.querySelector('input').checked, false);
+  } finally { await reset(); globalThis.fetch = originalFetch; }
+});

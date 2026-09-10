@@ -9,13 +9,14 @@ export default function PyqPractice(){
  const {subject,year,topic,index}=position;
  const [rows,setRows]=useState([]),[error,setError]=useState(''),[choice,setChoice]=useState(''),[reveal,setReveal]=useState(false),[imageFailed,setImageFailed]=useState(false),[retry,setRetry]=useState(0);
  const setSubject=v=>setPosition(p=>({...p,subject:v})),setYear=v=>setPosition(p=>({...p,year:v})),setTopic=v=>setPosition(p=>({...p,topic:v})),setIndex=v=>setPosition(p=>({...p,index:typeof v==='function'?v(p.index):v}));
- useEffect(()=>{const controller=new AbortController();setError('');fetch(`${base}questions.json`,{signal:controller.signal}).then(r=>{if(!r.ok)throw Error('Question bank could not load. Please retry.');return r.json();}).then(setRows).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>controller.abort();},[retry]);
+ useEffect(()=>{const controller=new AbortController();fetch(`${base}questions.json`,{signal:controller.signal}).then(r=>{if(!r.ok)throw Error('Question bank could not load. Please retry.');return r.json();}).then(setRows).catch(e=>{if(e.name!=='AbortError')setError(e.message);});return()=>controller.abort();},[retry]);
  const subjects=useMemo(()=>[...new Set(rows.map(q=>q.subject))].sort(),[rows]);
  const topics=useMemo(()=>[...new Set(rows.filter(q=>!subject||q.subject===subject).map(q=>q.topic))].sort(),[rows,subject]);
  const filtered=useMemo(()=>rows.filter(q=>!q.hold&&(!subject||q.subject===subject)&&(!year||String(q.source.year)===year)&&(!topic||q.topic===topic)),[rows,subject,year,topic]);
  const safeIndex=Math.min(Math.max(0,Number(index)||0),Math.max(0,filtered.length-1));
  const q=filtered[safeIndex];
- useEffect(()=>{setChoice('');setReveal(false);setImageFailed(false);},[q?.id]);
+ const [previousQuestionId,setPreviousQuestionId]=useState(q?.id);
+ if(previousQuestionId!==q?.id){setPreviousQuestionId(q?.id);setChoice('');setReveal(false);setImageFailed(false);}
  const previous=q?attempts[q.id]:null;
  const shown=Boolean(previous)||reveal;
  const selected=previous?.choice||choice;
@@ -25,7 +26,7 @@ export default function PyqPractice(){
  return <div className="mx-auto max-w-4xl space-y-6 pb-10"><header><h1 className="text-3xl font-bold">Previous year questions</h1><p className="mt-2 text-zinc-400">2019–2025 · 20,600 questions · 248 HOLD questions excluded from practice.</p><p className="text-sm text-zinc-400">Source verification is incomplete. Questions requiring unavailable visuals cannot be answered here.</p></header>
  <div className="grid gap-3 sm:grid-cols-3">{[['Subject',subject,subjects,v=>{setSubject(v);setTopic('');reset();}],['Year',year,['2019','2020','2021','2022','2023','2024','2025'],v=>{setYear(v);reset();}],['Topic',topic,topics,v=>{setTopic(v);reset();}]].map(([label,value,options,change])=><label key={label}>{label}<select className="mt-1 w-full rounded-xl bg-zinc-900 p-3" value={value} onChange={e=>change(e.target.value)}><option value="">All {label.toLowerCase()}s</option>{options.map(o=><option key={o}>{o}</option>)}</select></label>)}</div>
  <p className="pyq-summary">{Object.keys(attempts).length} answered · {Object.values(attempts).filter(a=>a.correct).length} correct · Answers and position saved on this device</p>
- {error?<div role="alert">{error}<button className="primary-btn" onClick={()=>setRetry(v=>v+1)}>Retry loading</button></div>:!rows.length?<p role="status">Loading question bank…</p>:!q?<p>No questions match these filters.</p>:<article className="space-y-5 rounded-2xl border border-zinc-700 bg-zinc-900 p-5 sm:p-8">
+ {error?<div role="alert">{error}<button className="primary-btn" onClick={()=>{setError('');setRetry(v=>v+1);}}>Retry loading</button></div>:!rows.length?<p role="status">Loading question bank…</p>:!q?<p>No questions match these filters.</p>:<article className="space-y-5 rounded-2xl border border-zinc-700 bg-zinc-900 p-5 sm:p-8">
  <p className="text-sm text-cyan-200">{safeIndex+1} / {filtered.length.toLocaleString()} · {q.source.date} · {q.source.shift} · Question {q.source.questionNumber}</p>
  <h2 className="whitespace-pre-wrap text-xl">{q.question}</h2>
  {q.images.filter(p=>!Object.values(q.optionImages).includes(p)).map(p=><img className="max-h-80 max-w-full rounded bg-white object-contain" key={p} src={base+p} alt="Question figure" onError={()=>setImageFailed(true)}/>)}

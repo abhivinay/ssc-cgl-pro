@@ -7,11 +7,14 @@ const{studyState,completeStage}=useStudy();
 const controllerRef=useRef(null);
 const[session,setSession]=useState(null);
 const[timer,setTimer]=useState(null);
+const[available,setAvailable]=useState(false);
 
 useEffect(()=>{
 const controller=createController({studyState,completeStage,preset});
 controllerRef.current=controller;
+// eslint-disable-next-line react-hooks/set-state-in-effect -- Publish the newly created external controller snapshot.
 setSession(controller?.getSession()||null);
+setAvailable(Boolean(controller));
 setTimer(controller?.getTimer()||null);
 return()=>{
 controllerRef.current=null;
@@ -51,6 +54,6 @@ pause,
 resume,
 stop,
 complete,
-available:Boolean(controllerRef.current)
+available
 };
 }

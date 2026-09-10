@@ -18,10 +18,13 @@ finishGame
 const[memorize,setMemorize]=useState(true);
 const[selected,setSelected]=useState([]);
 
-useEffect(()=>{
-
+const[previousRound,setPreviousRound]=useState(state.round);
+if(previousRound!==state.round){
+setPreviousRound(state.round);
 setMemorize(true);
 setSelected([]);
+}
+useEffect(()=>{
 
 const timer=setTimeout(()=>{
 setMemorize(false);

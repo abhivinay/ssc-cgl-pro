@@ -35,9 +35,12 @@ Extraction is disabled with a clear error until both settings exist. The backend
 ```sh
 npm test
 npm run build
+npm run lint
 ```
 
-The regression suite uses synthetic records and temporary directories, not your saved progress. Existing repository-wide lint debt remains; `npm run lint` is available for cleanup.
+The regression suite uses synthetic records and temporary directories, not your saved progress. It includes a real backend process restart that verifies study progress, PYQ answers, question records and recovery snapshots on disk. Lint has no errors; 18 existing hook dependency warnings remain.
+
+Windows validation and remaining limits are recorded in [verification notes](docs/WINDOWS_VERIFICATION.md).
 
 ## Upgrade scope
 

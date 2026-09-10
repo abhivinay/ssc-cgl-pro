@@ -32,3 +32,13 @@ test("unconfigured extraction returns a non-retryable error", async () => {
   const response = await fetch(`${base}/api/extract-pdf`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
   assert.equal(response.status, 503); assert.equal((await response.json()).retryable, false);
 });
+
+test("malformed JSON reaches the Express error handler without changing saved progress", async () => {
+  const before = await (await fetch(`${base}/api/progress`)).json();
+  const response = await fetch(`${base}/api/progress`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: "{broken",
+  });
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { error: "Invalid JSON request", retryable: false });
+  assert.deepEqual(await (await fetch(`${base}/api/progress`)).json(), before);
+});

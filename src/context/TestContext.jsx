@@ -155,6 +155,7 @@ resetTest
 );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- This hook shares the provider's context; edits here require a full reload.
 export const useTest=()=>{
 const context=useContext(TestContext);
 if(!context)throw new Error("useTest must be used inside TestProvider");
