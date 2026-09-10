@@ -1,116 +1,124 @@
-import{useEffect,useId,useRef}from"react";
+import { useEffect, useId, useRef } from "react";
 
 export default function Modal({
-open=false,
-onClose,
-title,
-description,
-children,
-footer,
-size="md",
-closeOnBackdrop=true,
-className=""
-}){
-const dialogRef=useRef(null);
-const titleId=useId();
-const descriptionId=useId();
-const sizes={
-sm:"max-w-md",
-md:"max-w-xl",
-lg:"max-w-3xl",
-xl:"max-w-5xl"
-};
+  open = false,
+  onClose,
+  title,
+  description,
+  children,
+  footer,
+  size = "md",
+  closeOnBackdrop = true,
+  className = "",
+}) {
+  const dialogRef = useRef(null);
+  const titleId = useId();
+  const descriptionId = useId();
+  const sizes = {
+    sm: "max-w-md",
+    md: "max-w-xl",
+    lg: "max-w-3xl",
+    xl: "max-w-5xl",
+  };
 
-useEffect(()=>{
-if(!open)return;
-const previousFocus=document.activeElement;
-const previousOverflow=document.body.style.overflow;
-const focusable=()=>Array.from(dialogRef.current?.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')||[]);
-focusable()[0]?.focus();
+  useEffect(() => {
+    if (!open) return;
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    const focusable = () =>
+      Array.from(
+        dialogRef.current?.querySelectorAll(
+          'button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]',
+        ) || [],
+      );
+    focusable()[0]?.focus();
 
-const handleKeyDown=event=>{
-if(event.key==="Escape"){
-onClose?.();
-}
-if(event.key==="Tab"){
-const items=focusable();const first=items[0];const last=items[items.length-1];
-if(!items.length){event.preventDefault();dialogRef.current?.focus();}
-else if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
-else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
-}
-};
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onClose?.();
+      }
+      if (event.key === "Tab") {
+        const items = focusable();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (!items.length) {
+          event.preventDefault();
+          dialogRef.current?.focus();
+        } else if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
 
-document.addEventListener("keydown",handleKeyDown);
-document.body.style.overflow="hidden";
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
 
-return()=>{
-document.removeEventListener("keydown",handleKeyDown);
-document.body.style.overflow=previousOverflow;
-previousFocus?.focus?.();
-};
-},[open,onClose]);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus?.();
+    };
+  }, [open, onClose]);
 
-if(!open)return null;
+  if (!open) return null;
 
-return(
-<div
-className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
-onMouseDown={event=>{
-if(
-closeOnBackdrop&&
-event.target===event.currentTarget
-){
-onClose?.();
-}
-}}
->
-<div
-role="dialog"
-ref={dialogRef}
-tabIndex={-1}
-aria-labelledby={title?titleId:undefined}
-aria-label={title?undefined:"Dialog"}
-aria-describedby={description?descriptionId:undefined}
-aria-modal="true"
-className={`w-full overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/95 shadow-[0_30px_120px_rgba(0,0,0,0.65)] ${
-sizes[size]||sizes.md
-} ${className}`}
->
-<div className="flex items-start justify-between gap-4 border-b border-white/10 p-6">
-<div>
-{title&&(
-<h2 id={titleId} className="text-2xl font-black text-white">
-{title}
-</h2>
-)}
+  return (
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4 "
+      onMouseDown={(event) => {
+        if (closeOnBackdrop && event.target === event.currentTarget) {
+          onClose?.();
+        }
+      }}
+    >
+      <div
+        role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
+        aria-labelledby={title ? titleId : undefined}
+        aria-label={title ? undefined : "Dialog"}
+        aria-describedby={description ? descriptionId : undefined}
+        aria-modal="true"
+        className={`w-full overflow-hidden rounded-lg border border-white/10 bg-zinc-900/95  ${
+          sizes[size] || sizes.md
+        } ${className}`}
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 p-6">
+          <div>
+            {title && (
+              <h2 id={titleId} className="text-2xl font-semibold text-white">
+                {title}
+              </h2>
+            )}
 
-{description&&(
-<p id={descriptionId} className="mt-2 text-sm leading-6 text-zinc-400">
-{description}
-</p>
-)}
-</div>
+            {description && (
+              <p
+                id={descriptionId}
+                className="mt-2 text-sm leading-6 text-zinc-400"
+              >
+                {description}
+              </p>
+            )}
+          </div>
 
-<button
-type="button"
-onClick={onClose}
-aria-label="Close modal"
-className="rounded-xl p-2 text-zinc-500 transition hover:bg-white/5 hover:text-white"
->
-✕
-</button>
-</div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close modal"
+            className="rounded-xl p-2 text-zinc-500 transition hover:bg-white/5 hover:text-white"
+          >
+            Close modal
+          </button>
+        </div>
 
-<div className="max-h-[70vh] overflow-y-auto p-6">
-{children}
-</div>
+        <div className="max-h-[70vh] overflow-y-auto p-6">{children}</div>
 
-{footer&&(
-<div className="border-t border-white/10 p-6">
-{footer}
-</div>
-)}
-</div>
-</div>
-);
+        {footer && <div className="border-t border-white/10 p-6">{footer}</div>}
+      </div>
+    </div>
+  );
 }

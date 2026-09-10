@@ -1,62 +1,52 @@
-import{forwardRef}from"react";
-
-const Input=forwardRef(function Input({
-label,
-error,
-hint,
-leftIcon,
-rightIcon,
-className="",
-containerClassName="",
-...props
-},ref){
-return(
-<div className={containerClassName}>
-{label&&(
-<label className="mb-2 block text-sm font-semibold text-zinc-300">
-{label}
-</label>
-)}
-
-<div className="relative">
-{leftIcon&&(
-<div className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-zinc-500">
-{leftIcon}
-</div>
-)}
-
-<input
-ref={ref}
-className={`min-h-12 w-full rounded-2xl border bg-zinc-950/80 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-600 ${
-leftIcon?"pl-11":""
-} ${
-rightIcon?"pr-11":""
-} ${
-error
-?"border-red-500/60 focus:border-red-400 focus:ring-4 focus:ring-red-500/10"
-:"border-zinc-700/90 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10"
-} ${className}`}
-{...props}
-/>
-
-{rightIcon&&(
-<div className="absolute inset-y-0 right-4 flex items-center text-zinc-500">
-{rightIcon}
-</div>
-)}
-</div>
-
-{error?(
-<p className="mt-2 text-sm text-red-400">
-{error}
-</p>
-):hint?(
-<p className="mt-2 text-sm text-zinc-500">
-{hint}
-</p>
-):null}
-</div>
-);
+import { forwardRef, useId } from "react";
+const Input = forwardRef(function Input(
+  {
+    label,
+    error,
+    hint,
+    className = "",
+    containerClassName = "",
+    id: providedId,
+    ...props
+  },
+  ref,
+) {
+  const generatedId = useId(),
+    id = providedId || generatedId,
+    descriptionId = id + "-description";
+  return (
+    <div className={containerClassName}>
+      {label && (
+        <label
+          htmlFor={id}
+          className="mb-2 block text-sm font-medium text-zinc-300"
+        >
+          {label}
+        </label>
+      )}
+      <input
+        {...props}
+        id={id}
+        ref={ref}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={
+          error || hint ? descriptionId : props["aria-describedby"]
+        }
+        className={
+          "min-h-11 w-full rounded border border-zinc-700 bg-zinc-950 px-3 py-2 text-zinc-100 " +
+          className
+        }
+      />
+      {(error || hint) && (
+        <p
+          id={descriptionId}
+          role={error ? "alert" : undefined}
+          className="mt-2 text-sm text-zinc-400"
+        >
+          {error || hint}
+        </p>
+      )}
+    </div>
+  );
 });
-
 export default Input;

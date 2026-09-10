@@ -1,10 +1,30 @@
-import {useSyncExternalStore} from 'react';
-import {Link} from 'react-router-dom';
-import {CloudCheck,CloudOff,LoaderCircle} from 'lucide-react';
-import {getSyncStatus,subscribeSync} from '../../services/progressSync';
-export default function SyncIndicator(){
- const state=useSyncExternalStore(subscribeSync,getSyncStatus,getSyncStatus);
- const saved=state.phase==='saved', waiting=['connecting','saving'].includes(state.phase);
- const Icon=saved?CloudCheck:waiting?LoaderCircle:CloudOff;
- return <Link to="/settings" className={`sync-indicator ${saved?'is-saved':''}`} aria-label={`Progress storage: ${saved?'Saved to disk':waiting?'Connecting or saving':'Needs attention'}`}><Icon size={16}/><span>{saved?'Saved to disk':waiting?'Syncing progress':'Device copy only'}</span></Link>;
+import { useSyncExternalStore } from "react";
+import { Link } from "react-router-dom";
+import { getSyncStatus, subscribeSync } from "../../services/progressSync";
+export default function SyncIndicator() {
+  const state = useSyncExternalStore(
+    subscribeSync,
+    getSyncStatus,
+    getSyncStatus,
+  );
+  const saved = state.phase === "saved",
+    waiting = ["connecting", "saving"].includes(state.phase);
+  const label = saved
+    ? "Saved to disk"
+    : waiting
+      ? "Syncing progress"
+      : "Device copy only";
+  return (
+    <Link
+      to="/settings"
+      className="sync-indicator"
+      aria-label={"Progress storage: " + label}
+    >
+      <span
+        className={"status-line " + (saved ? "is-saved" : "")}
+        aria-hidden="true"
+      />
+      {label}
+    </Link>
+  );
 }

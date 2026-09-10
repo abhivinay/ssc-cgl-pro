@@ -1,63 +1,30 @@
-const clamp=value=>{
-const number=Number(value);
-return Number.isFinite(number)
-?Math.min(100,Math.max(0,number))
-:0;
-};
-
-const SIZES={
-sm:"h-2",
-md:"h-3",
-lg:"h-4"
-};
-
-const VARIANTS={
-primary:"bg-violet-500",
-success:"bg-emerald-500",
-warning:"bg-amber-500",
-danger:"bg-red-500",
-info:"bg-sky-500"
-};
-
 export default function ProgressBar({
-value=0,
-label,
-showValue=false,
-size="md",
-variant="primary",
-className="",
-trackClassName=""
-}){
-const progress=Math.round(clamp(value));
-
-return(
-<div className={className}>
-{(label||showValue)&&(
-<div className="mb-2 flex items-center justify-between gap-4">
-{label&&(
-<p className="text-sm font-medium text-zinc-400">
-{label}
-</p>
-)}
-
-{showValue&&(
-<p className="text-sm font-semibold text-zinc-200">
-{progress}%
-</p>
-)}
-</div>
-)}
-
-<div className={`overflow-hidden rounded-full bg-zinc-800/90 ${
-SIZES[size]||SIZES.md
-} ${trackClassName}`}>
-<div
-className={`h-full rounded-full transition-all duration-700 ease-out ${
-VARIANTS[variant]||VARIANTS.primary
-}`}
-style={{width:`${progress}%`}}
-/>
-</div>
-</div>
-);
+  value = 0,
+  label,
+  showValue = false,
+  size = "md",
+  className = "",
+  trackClassName = "",
+}) {
+  const progress = Math.round(Math.min(100, Math.max(0, Number(value) || 0)));
+  return (
+    <div className={"data-progress " + className}>
+      {(label || showValue) && (
+        <div className="data-progress-label">
+          <span>{label}</span>
+          {showValue && <span>{progress}%</span>}
+        </div>
+      )}
+      <div
+        className={"data-track data-track-" + size + " " + trackClassName}
+        role="progressbar"
+        aria-label={label || "Progress"}
+        aria-valuenow={progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div style={{ width: progress + "%" }} />
+      </div>
+    </div>
+  );
 }
