@@ -73,6 +73,8 @@ value.getDate()
 ].join("-");
 };
 
+const EMPTY_LIST=[];
+
 export default function Analytics(){
 const{studyState}=useStudy();
 
@@ -86,15 +88,15 @@ history
 
 const topics=Array.isArray(studyState.topics)
 ?studyState.topics
-:[];
+:EMPTY_LIST;
 
 const revisions=Array.isArray(studyState.revisions)
 ?studyState.revisions
-:[];
+:EMPTY_LIST;
 
 const activities=Array.isArray(studyState.activity)
 ?studyState.activity
-:[];
+:EMPTY_LIST;
 
 const analytics=useMemo(()=>{
 const totalTopics=topics.length;

@@ -1,4 +1,4 @@
-import {createContext,useContext,useEffect,useMemo} from "react";
+import {createContext,useCallback,useContext,useEffect,useMemo} from "react";
 import usePersistentState from "../hooks/usePersistentState";
 import {readJSON} from "../services/safeStorage";
 import {readRevisions} from "../services/revisionStorage";
@@ -312,7 +312,7 @@ dailyMissionPlan:createDailyMissionPlan(previous.topics,today)
 refreshDailyState();
 const interval=setInterval(refreshDailyState,60000);
 return()=>clearInterval(interval);
-},[]);
+},[setStudyState]);
 
 const dailyMission=useMemo(()=>{
 const topicIds=Array.isArray(internalStudyState.dailyMissionPlan?.topicIds)
@@ -397,7 +397,7 @@ missionCompleted:Boolean(internalStudyState.dailyMissionPlan?.completed)
 };
 },[internalStudyState,dueRevisions]);
 
-const completeStage=(topicId,requestedStage,result)=>{
+const completeStage=useCallback((topicId,requestedStage,result)=>{
 const stage=normalizeStage(requestedStage);
 
 if(!STAGES.includes(stage))return;
@@ -546,9 +546,9 @@ topicCompleted
 )
 };
 });
-};
+},[setStudyState]);
 
-const addTopicNote=(topicId,text)=>{
+const addTopicNote=useCallback((topicId,text)=>{
 const value=String(text||"").trim();
 if(!value)return;
 
@@ -571,9 +571,9 @@ createdAt:new Date().toISOString()
 ),
 activity:addActivity(previous.activity,"note-added","A topic note was added")
 }));
-};
+},[setStudyState]);
 
-const addTopicMistake=(topicId,text)=>{
+const addTopicMistake=useCallback((topicId,text)=>{
 const value=String(text||"").trim();
 if(!value)return;
 
@@ -596,9 +596,9 @@ createdAt:new Date().toISOString()
 ),
 activity:addActivity(previous.activity,"mistake-added","A mistake was added to the notebook")
 }));
-};
+},[setStudyState]);
 
-const addStudyMinutes=minutes=>{
+const addStudyMinutes=useCallback(minutes=>{
 const value=Math.max(0,Number(minutes)||0);
 if(!value)return;
 
@@ -608,9 +608,9 @@ studyMinutes:(Number(previous.studyMinutes)||0)+value,
 totalStudyMinutes:(Number(previous.totalStudyMinutes)||0)+value,
 activity:addActivity(previous.activity,"study-session",`${value} study minutes completed`)
 }));
-};
+},[setStudyState]);
 
-const completeBrainTrainer=()=>{
+const completeBrainTrainer=useCallback(()=>{
 setStudyState(previous=>{
 if(previous.brainTrainerCompleted)return previous;
 
@@ -620,9 +620,9 @@ brainTrainerCompleted:true,
 activity:addActivity(previous.activity,"brain-trainer","Daily Brain Trainer completed")
 };
 });
-};
+},[setStudyState]);
 
-const completeRevisionById=revisionId=>{
+const completeRevisionById=useCallback(revisionId=>{
 setStudyState(previous=>{
 const id=String(revisionId);
 
@@ -664,11 +664,11 @@ nextRevision
 )
 };
 });
-};
+},[setStudyState]);
 
-const getRevisionDue=()=>dueRevisions;
+const getRevisionDue=useCallback(()=>dueRevisions,[dueRevisions]);
 
-const resetDailyProgress=()=>{
+const resetDailyProgress=useCallback(()=>{
 setStudyState(previous=>({
 ...previous,
 studyMinutes:0,
@@ -676,9 +676,9 @@ brainTrainerCompleted:false,
 missionRewardClaimed:false,
 dailyMissionPlan:createDailyMissionPlan(previous.topics)
 }));
-};
+},[setStudyState]);
 
-const resetSubjectProgress=subject=>{
+const resetSubjectProgress=useCallback(subject=>{
 setStudyState(previous=>{
 const freshTopics=createTopics();
 
@@ -707,15 +707,15 @@ previous.activity,
 )
 };
 });
-};
+},[setStudyState]);
 
-const resetAllProgress=()=>{
+const resetAllProgress=useCallback(()=>{
 localStorage.removeItem("studyState");
 localStorage.removeItem("studyStreak");
 localStorage.removeItem("bestStreak");
 localStorage.removeItem("lastStudyDate");
 setStudyState({...createDefaultState(),schemaVersion:2,revisionSchema:1,xpHistory:[],brainCompletedDate:null});
-};
+},[setStudyState]);
 
 const contextValue=useMemo(()=>({
 studyState,
@@ -739,7 +739,18 @@ setStudyState
 studyState,
 dashboard,
 dailyMission,
-dueRevisions
+dueRevisions,
+getRevisionDue,
+completeStage,
+addTopicNote,
+addTopicMistake,
+addStudyMinutes,
+completeBrainTrainer,
+completeRevisionById,
+resetDailyProgress,
+resetSubjectProgress,
+resetAllProgress,
+setStudyState
 ]);
 
 return(

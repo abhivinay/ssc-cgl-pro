@@ -9,17 +9,19 @@ english:"English",
 gk:"General Awareness"
 };
 
+const EMPTY_LIST=[];
+
 export default function Planner(){
 const navigate=useNavigate();
 const{studyState,dueRevisions}=useStudy();
 
 const topics=Array.isArray(studyState.topics)
 ?studyState.topics
-:[];
+:EMPTY_LIST;
 
 const revisions=Array.isArray(studyState.revisions)
 ?studyState.revisions
-:[];
+:EMPTY_LIST;
 
 const planner=useMemo(()=>{
 const incompleteTopics=topics.filter(

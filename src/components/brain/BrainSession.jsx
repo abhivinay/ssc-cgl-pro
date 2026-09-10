@@ -23,6 +23,8 @@ totalAttempts:0,
 accuracy:0
 };
 
+const EMPTY_LIST=[];
+
 export default function BrainSession(){
 const navigate=useNavigate();
 const{
@@ -44,7 +46,7 @@ Number(session?.currentGameIndex)||0
 
 const completedResults=Array.isArray(session?.results)
 ?session.results
-:[];
+:EMPTY_LIST;
 
 const completedStats=useMemo(()=>{
 return completedResults.reduce(

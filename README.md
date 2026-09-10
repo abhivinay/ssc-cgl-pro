@@ -38,7 +38,7 @@ npm run build
 npm run lint
 ```
 
-The regression suite uses synthetic records and temporary directories, not your saved progress. It includes a real backend process restart that verifies study progress, PYQ answers, question records and recovery snapshots on disk. Lint has no errors; 18 existing hook dependency warnings remain.
+The regression suite uses synthetic records and temporary directories, not your saved progress. It includes a real backend process restart that verifies study progress, PYQ answers, question records and recovery snapshots on disk. Lint passes with zero errors and zero warnings; use `npm run lint -- --max-warnings=0` to enforce this.
 
 Windows validation and remaining limits are recorded in [verification notes](docs/WINDOWS_VERIFICATION.md).
 

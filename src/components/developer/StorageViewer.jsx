@@ -11,7 +11,11 @@ onChange
 }){
 const[fileError,setFileError]=useState("");
 const snapshot=useMemo(
-()=>getStorageSnapshot(),
+()=>{
+// The parent increments this token after a storage operation.
+void refreshKey;
+return getStorageSnapshot();
+},
 [refreshKey]
 );
 

@@ -1,6 +1,6 @@
 import {validateQuestion} from "../utils/questionValidator";
 import ExtractionLog from "../components/ai/ExtractionLog";
-import {useEffect,useMemo,useRef,useState} from "react";
+import {useEffect,useEffectEvent,useMemo,useRef,useState} from "react";
 import AIProgressCard from "../components/ai/AIProgressCard";
 import useExtractionQueue from "../hooks/useExtractionQueue";
 import {extractQuestionWithGemini} from "../services/gemini";
@@ -431,8 +431,7 @@ link.remove();
 URL.revokeObjectURL(url);
 }
 
-useEffect(()=>{
-function handleKeyDown(event){
+const onKeyDown=useEffectEvent(event=>{
 const tagName=event.target.tagName;
 
 if(
@@ -462,11 +461,13 @@ break;
 default:
 break;
 }
-}
+});
 
+useEffect(()=>{
+const handleKeyDown=event=>onKeyDown(event);
 window.addEventListener("keydown",handleKeyDown);
 return()=>window.removeEventListener("keydown",handleKeyDown);
-},[currentIndex,filteredQuestions,questions,currentQuestion]);
+},[]);
 
 if(loading){
 return(
@@ -502,6 +503,7 @@ Shortcuts: ← Previous · → Next · V Verify · S Save
 
 <div className="flex flex-wrap gap-2">
 <select
+aria-label="Filter questions"
 value={filter}
 onChange={event=>{
 setFilter(event.target.value);
@@ -643,10 +645,11 @@ Validation issues
 )}
 
 <div>
-<label className="mb-2 block text-sm font-medium text-zinc-300">
+<label htmlFor="pyq-question-text" className="mb-2 block text-sm font-medium text-zinc-300">
 Question text
 </label>
 <textarea
+id="pyq-question-text"
 value={currentQuestion.questionText}
 onChange={event=>updateCurrentQuestion("questionText",event.target.value)}
 rows={7}
@@ -663,6 +666,7 @@ className="w-full rounded-xl border border-zinc-700 bg-zinc-950 p-3 text-sm text
 {index+1}
 </span>
 <input
+aria-label={`Option ${index+1}`}
 value={option}
 onChange={event=>updateOption(index,event.target.value)}
 className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
@@ -672,10 +676,11 @@ className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-s
 </div>
 
 <div>
-<label className="mb-2 block text-sm font-medium text-zinc-300">
+<label htmlFor="pyq-correct-answer" className="mb-2 block text-sm font-medium text-zinc-300">
 Correct answer
 </label>
 <select
+id="pyq-correct-answer"
 value={currentQuestion.correctAnswer}
 onChange={event=>updateCurrentQuestion("correctAnswer",event.target.value)}
 className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white outline-none"
@@ -689,10 +694,11 @@ className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-s
 </div>
 
 <div>
-<label className="mb-2 block text-sm font-medium text-zinc-300">
+<label htmlFor="pyq-explanation" className="mb-2 block text-sm font-medium text-zinc-300">
 Explanation
 </label>
 <textarea
+id="pyq-explanation"
 value={currentQuestion.explanation}
 onChange={event=>updateCurrentQuestion("explanation",event.target.value)}
 rows={4}

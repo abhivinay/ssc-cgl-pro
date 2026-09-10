@@ -4,6 +4,8 @@ import mentorEngine from "../utils/mentorEngine";
 
 const SUBJECTS=["Quant","Reasoning","English","General Awareness"];
 
+const EMPTY_LIST=[];
+
 export default function MockTests(){
 const{studyState,setStudyState}=useStudy();
 const[error,setError]=useState("");
@@ -18,7 +20,7 @@ time:"",
 weakestSubject:"Quant"
 });
 
-const mocks=studyState.mockHistory||[];
+const mocks=studyState.mockHistory||EMPTY_LIST;
 
 const mentor=useMemo(()=>{
 const latest=mocks[mocks.length-1];

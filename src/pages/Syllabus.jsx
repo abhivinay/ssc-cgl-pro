@@ -169,15 +169,17 @@ return(
 );
 }
 
+const EMPTY_LIST=[];
+
 export default function Syllabus(){
 const {studyState,dashboard,stages,stageXP,getRevisionDue}=useStudy();
 const [activeSubject,setActiveSubject]=useState("quant");
 const [search,setSearch]=useState("");
 const [statusFilter,setStatusFilter]=useState("all");
 
-const allTopics=Array.isArray(studyState.topics)?studyState.topics:[];
+const allTopics=Array.isArray(studyState.topics)?studyState.topics:EMPTY_LIST;
 const stageList=Array.isArray(stages)&&stages.length?stages:Object.keys(STAGE_META);
-const revisionsDue=typeof getRevisionDue==="function"?getRevisionDue():dashboard.revisionDue||[];
+const revisionsDue=useMemo(()=>typeof getRevisionDue==="function"?getRevisionDue():dashboard.revisionDue||EMPTY_LIST,[getRevisionDue,dashboard.revisionDue]);
 
 const revisionMap=useMemo(()=>{
 const map=new Map();
@@ -194,7 +196,7 @@ return groups;
 },{}),[allTopics]);
 
 const subject=SUBJECTS.find(item=>item.id===activeSubject)||SUBJECTS[0];
-const subjectTopics=topicsBySubject[activeSubject]||[];
+const subjectTopics=topicsBySubject[activeSubject]||EMPTY_LIST;
 
 const filteredTopics=useMemo(()=>{
 const query=search.trim().toLowerCase();

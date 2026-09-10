@@ -101,6 +101,7 @@ className="mt-10 space-y-5"
 >
 
 <input
+aria-label="Remembered number"
 ref={inputRef}
 type="text"
 value={answer}

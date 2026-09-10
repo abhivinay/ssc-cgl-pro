@@ -88,9 +88,11 @@ Round {state.round} / {TOTAL_ROUNDS}
 
 </div>
 
-<div
-onClick={canClick?handleClick:undefined}
-className={`mt-10 flex h-80 cursor-pointer items-center justify-center rounded-3xl border text-center transition ${
+<button
+type="button"
+disabled={!canClick}
+onClick={handleClick}
+className={`mt-10 flex h-80 w-full cursor-pointer items-center justify-center rounded-3xl border text-center transition ${
 canClick
 ?"border-emerald-400 bg-emerald-500 text-black"
 :"border-zinc-800 bg-zinc-950 text-zinc-500"
@@ -101,7 +103,7 @@ canClick
 ?"CLICK NOW!"
 :"Wait..."}
 
-</div>
+</button>
 
 {state.lastResult&&(
 

@@ -1,4 +1,4 @@
-import test, { after } from "node:test";
+import test, { after, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -6,7 +6,6 @@ import { join } from "node:path";
 import { JSDOM } from "jsdom";
 import { createServer } from "vite";
 import * as React from "react";
-import { createRoot } from "react-dom/client";
 import { createProgressStore } from "../server/progressStore.js";
 
 const dom = new JSDOM('<!doctype html><div id="root"></div>', { url: "http://localhost:5173/", pretendToBeVisual: true });
@@ -16,6 +15,12 @@ globalThis.cancelAnimationFrame = dom.window.cancelAnimationFrame.bind(dom.windo
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 globalThis.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
 dom.window.matchMedia = () => ({ matches: false, addListener() {}, removeListener() {}, addEventListener() {}, removeEventListener() {} });
+// React checks input-event support when React DOM is first imported.
+// Initialize the document first so keyboard tests use its DOM event path.
+const { createRoot } = await import("react-dom/client");
+const browserErrors = [];
+dom.window.addEventListener("error", event => browserErrors.push(event.error));
+afterEach(() => assert.deepEqual(browserErrors.splice(0), [], "No uncaught DOM event errors"));
 const vite = await createServer({ server: { middlewareMode: true }, appType: "custom", logLevel: "error" });
 const load = path => vite.ssrLoadModule(path);
 const storage = await load("/src/services/safeStorage.js");
@@ -291,4 +296,162 @@ test("PYQ visual failures block saving and clear when moving to another question
     assert.doesNotMatch(container.textContent, /Required visual content is unavailable/);
     assert.equal(container.querySelector('input').checked, false);
   } finally { await reset(); globalThis.fetch = originalFetch; }
+});
+
+test("mission actions stay stable and an active timer survives unrelated progress edits", async () => {
+  await reset();
+  const { default: useMissionSession } = await load('/src/hooks/useMissionSession.js');
+  let state;
+  function MissionProbe() { state = { study: useStudy(), mission: useMissionSession() }; return null; }
+  await mount(React.createElement(StudyProvider, null, React.createElement(MissionProbe)));
+  assert.equal(state.mission.available, true);
+  const completeStage = state.study.completeStage;
+  await React.act(async () => state.mission.start());
+  const runningSession = state.mission.session;
+  await React.act(async () => state.study.addTopicNote(runningSession.topicId, 'Synthetic note'));
+  assert.equal(state.study.completeStage, completeStage);
+  assert.equal(state.mission.session, runningSession);
+  assert.equal(state.mission.timer.running, true);
+  await React.act(async () => state.mission.pause());
+  assert.equal(state.mission.timer.running, false);
+  await React.act(async () => state.mission.resume());
+  assert.equal(state.mission.timer.running, true);
+  await React.act(async () => state.mission.stop());
+  assert.equal(state.mission.session.status, 'stopped');
+});
+
+test("achievement popup uses the latest close callback without extending its dismissal deadline", async () => {
+  await reset();
+  const { default: AchievementPopup } = await load('/src/components/achievements/AchievementPopup.jsx');
+  const achievement = { title: 'Synthetic achievement' };
+  const calls = [];
+  await mount(React.createElement(AchievementPopup, { achievement, duration: 1000, onClose: () => calls.push('old') }));
+  assert.ok(container.querySelector('[role=status]'));
+  await React.act(async () => new Promise(resolve => setTimeout(resolve, 600)));
+  await React.act(async () => root.render(React.createElement(AchievementPopup, { achievement, duration: 1000, onClose: () => calls.push('latest') })));
+  await React.act(async () => new Promise(resolve => setTimeout(resolve, 500)));
+  assert.deepEqual(calls, ['latest']);
+});
+
+test("reaction game has a native keyboard-operable button and completes five rounds", async t => {
+  await reset();
+  const { default: SpeedReaction } = await load('/src/games/SpeedReaction.jsx');
+  const results = [];
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
+  try {
+    await mount(React.createElement(SpeedReaction, { onComplete: result => results.push(result) }));
+    for (let round = 1; round <= 5; round++) {
+      assert.match(container.textContent, new RegExp(`Round ${round} / 5`));
+      const button = container.querySelector('button');
+      assert.equal(button.disabled, true);
+      await React.act(async () => t.mock.timers.tick(10000));
+      assert.equal(button.disabled, false);
+      assert.equal(button.type, 'button');
+      assert.match(button.textContent, /CLICK NOW/);
+      await React.act(async () => button.click());
+      if (round < 5) await React.act(async () => t.mock.timers.tick(1300));
+    }
+    assert.equal(results.length, 1);
+    assert.equal(results[0].totalAttempts, 5);
+  } finally { await reset(); t.mock.timers.reset(); }
+});
+
+test("settings exports and restores a backup, preserving unrelated data and backing up before replacement", async () => {
+  await reset();
+  const { default: Settings } = await load('/src/pages/Settings.jsx');
+  const { MemoryRouter } = await import('react-router-dom');
+  const originalCreate = URL.createObjectURL;
+  const originalRevoke = URL.revokeObjectURL;
+  const originalClick = dom.window.HTMLAnchorElement.prototype.click;
+  const originalWindow = globalThis.window;
+  const downloads = [];
+  let reloads = 0;
+  URL.createObjectURL = blob => { downloads.push(blob); return `blob:fixture-${downloads.length}`; };
+  URL.revokeObjectURL = () => {};
+  dom.window.HTMLAnchorElement.prototype.click = () => {};
+  try {
+    localStorage.setItem('studyState', '{"xp":20}');
+    localStorage.setItem('ssc-pyq-attempts', '{"q":{"choice":"A"}}');
+    localStorage.setItem('unrelated', 'keep');
+    await mount(React.createElement(MemoryRouter, null, React.createElement(Settings)));
+    const button = text => [...container.querySelectorAll('button')].find(item => item.textContent === text);
+    await React.act(async () => button('Download backup').click());
+    const exported = JSON.parse(await downloads[0].text());
+    assert.equal(exported.entries.studyState, '{"xp":20}');
+    assert.equal(exported.entries.unrelated, undefined);
+    const restored = { ...exported, entries: { ...exported.entries, studyState: '{"xp":80}' } };
+    const input = container.querySelector('input[type=file]');
+    Object.defineProperty(input, 'files', { configurable: true, value: [{ size: 300, text: async () => JSON.stringify(restored) }] });
+    await React.act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
+    assert.equal(localStorage.getItem('studyState'), '{"xp":20}', 'inspection must not replace progress');
+    globalThis.window = new Proxy(originalWindow, {
+      get(target, key) {
+        if (key === 'location') return { reload: () => { reloads++; } };
+        const value = Reflect.get(target, key);
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
+    await React.act(async () => button('Back up current data & restore').click());
+    assert.equal(JSON.parse(await downloads[1].text()).entries.studyState, '{"xp":20}');
+    assert.equal(localStorage.getItem('studyState'), '{"xp":80}');
+    assert.equal(localStorage.getItem('ssc-pyq-attempts'), exported.entries['ssc-pyq-attempts']);
+    assert.equal(localStorage.getItem('unrelated'), 'keep');
+    assert.equal(localStorage.getItem('ssc-sync-pending'), '1');
+    assert.equal(reloads, 1, 'native page reload is stubbed in JSDOM');
+  } finally {
+    globalThis.window = originalWindow;
+    URL.createObjectURL = originalCreate; URL.revokeObjectURL = originalRevoke;
+    dom.window.HTMLAnchorElement.prototype.click = originalClick;
+    await reset();
+  }
+});
+
+test("PYQ review keyboard navigation uses the current question and ignores text editing", async () => {
+  await reset();
+  const { default: PyqReview } = await load('/src/pages/PyqReview.jsx');
+  localStorage.setItem('ssc-pyq-review-data', JSON.stringify([
+    { id: 'one', questionText: 'First synthetic question', options: ['1', '2', '3', '4'], correctAnswer: '1' },
+    { id: 'two', questionText: 'Second synthetic question', options: ['1', '2', '3', '4'], correctAnswer: '1' },
+  ]));
+  await mount(React.createElement(PyqReview));
+  const question = () => container.querySelector('#pyq-question-text');
+  assert.equal(question().labels[0].textContent.trim(), 'Question text');
+  assert.match(question().value, /First/);
+  await React.act(async () => document.body.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })));
+  assert.match(question().value, /Second/);
+  await React.act(async () => question().dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })));
+  assert.match(question().value, /Second/);
+  await React.act(async () => document.body.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true })));
+  assert.match(question().value, /First/);
+  for (const field of container.querySelectorAll('input,select,textarea')) {
+    assert.ok(field.getAttribute('aria-label') || field.labels?.length, 'Each review field has an accessible label');
+  }
+});
+
+test("offline save retry retains local progress and saves it after reconnection", async () => {
+  await reset();
+  const sync = await load('/src/services/progressSync.js');
+  const originalFetch = globalThis.fetch;
+  let offline = true;
+  let saved;
+  globalThis.fetch = async (_url, options) => {
+    if (offline) throw new Error('Synthetic connection failure');
+    if (options.method === 'PUT') {
+      const body = JSON.parse(options.body);
+      saved = { revision: body.baseRevision + 1, entries: body.entries, savedAt: new Date().toISOString() };
+      return { ok: true, json: async () => saved };
+    }
+    return { ok: true, json: async () => ({ revision: 0, entries: {} }) };
+  };
+  let stop;
+  try {
+    localStorage.setItem('studyState', '{"xp":55}');
+    await React.act(async () => { stop = sync.startProgressSync(); });
+    assert.equal(sync.getSyncStatus().phase, 'offline');
+    assert.equal(localStorage.getItem('studyState'), '{"xp":55}');
+    offline = false;
+    await React.act(async () => window.dispatchEvent(new Event('ssc-sync-retry')));
+    assert.equal(sync.getSyncStatus().phase, 'saved');
+    assert.equal(saved.entries.studyState, '{"xp":55}');
+  } finally { stop?.(); globalThis.fetch = originalFetch; await reset(); }
 });

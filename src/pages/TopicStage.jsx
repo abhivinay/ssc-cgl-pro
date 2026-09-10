@@ -1,4 +1,4 @@
-import{useEffect,useMemo,useState}from"react";
+import{useEffect,useEffectEvent,useMemo,useState}from"react";
 import{useNavigate,useParams}from"react-router-dom";
 import{useStudy}from"../context/StudyContext";
 import Page from"../components/ui/Page";
@@ -118,11 +118,13 @@ String(item.name||item.topic||"").toLowerCase()==="percentage"
 },[studyState.topics,topicId]);
 
 const [loaded,setLoaded]=useState({id:null,content:null,error:null});
+const loadCurrentTopic=useEffectEvent(()=>loadTopicContent(topic));
+const contentTopicId=topic?.id;
 useEffect(()=>{
 let cancelled=false;
-loadTopicContent(topic).then(content=>{if(!cancelled)setLoaded({id:topic?.id,content,error:null});}).catch(()=>{if(!cancelled)setLoaded({id:topic?.id,content:null,error:"Content could not load. Reload to retry."});});
+loadCurrentTopic().then(content=>{if(!cancelled)setLoaded({id:contentTopicId,content,error:null});}).catch(()=>{if(!cancelled)setLoaded({id:contentTopicId,content:null,error:"Content could not load. Reload to retry."});});
 return()=>{cancelled=true;};
-},[topic?.id]);
+},[contentTopicId]);
 const topicContent=loaded.id===topic?.id?loaded.content:null;
 
 const stageIndex=stageList.indexOf(

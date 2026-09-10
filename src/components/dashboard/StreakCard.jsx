@@ -19,6 +19,8 @@ const value=new Date(date);
 return`${value.getFullYear()}-${value.getMonth()}-${value.getDate()}`;
 };
 
+const EMPTY_LIST=[];
+
 export default function StreakCard(){
 const{studyState,dashboard}=useStudy();
 
@@ -50,7 +52,7 @@ dashboard.totalStudyMinutes
 
 const activity=Array.isArray(studyState.activity)
 ?studyState.activity
-:[];
+:EMPTY_LIST;
 
 const weeklyActivity=useMemo(()=>{
 const today=new Date();

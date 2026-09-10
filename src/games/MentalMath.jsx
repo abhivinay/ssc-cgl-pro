@@ -549,6 +549,7 @@ Solve
 
 <div className="mt-5">
 <input
+aria-label="Your answer"
 ref={inputRef}
 type="number"
 step="any"

@@ -1,24 +1,25 @@
-import{useEffect}from"react";
+import{useEffect,useEffectEvent}from"react";
 
 export default function AchievementPopup({
 achievement,
 onClose,
 duration=4000
 }){
+const closePopup=useEffectEvent(()=>onClose?.());
 useEffect(()=>{
 if(!achievement)return;
 
 const timer=setTimeout(()=>{
-onClose?.();
+closePopup();
 },Math.max(1000,Number(duration)||4000));
 
 return()=>clearTimeout(timer);
-},[achievement,duration,onClose]);
+},[achievement,duration]);
 
 if(!achievement)return null;
 
 return(
-<div className="fixed inset-x-4 top-5 z-[120] mx-auto max-w-md">
+<div role="status" aria-live="polite" className="fixed inset-x-4 top-5 z-[120] mx-auto max-w-md">
 <div className="overflow-hidden rounded-3xl border border-amber-400/30 bg-zinc-900/95 shadow-2xl backdrop-blur">
 <div className="h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-500"/>
 

@@ -8,7 +8,7 @@ export default function useBrainTrainer() {
   const todayKey = getDateKey();
   const [storageState] = usePersistentState("ssc-brain-trainer", normalizeState);
   const session = storageState.dailySession?.dateKey === todayKey ? storageState.dailySession : null;
-  const dailyPlan = useMemo(() => getDailyBrainPlan({ date: new Date(), count: 5 }), [todayKey]);
+  const dailyPlan = useMemo(() => getDailyBrainPlan({ date: new Date(`${todayKey}T12:00:00`), count: 5 }), [todayKey]);
   const completedToday = storageState.history.some(item => item.dateKey === todayKey && isBrainSessionComplete(item));
   const startDailySession = useCallback(() => {
     const latest = readBrainState();
