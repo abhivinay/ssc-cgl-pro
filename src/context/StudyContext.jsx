@@ -1,4 +1,7 @@
-import {createContext,useContext,useEffect,useMemo,useState} from "react";
+import {createContext,useCallback,useContext,useEffect,useMemo} from "react";
+import usePersistentState from "../hooks/usePersistentState";
+import {readJSON} from "../services/safeStorage";
+import {readRevisions} from "../services/revisionStorage";
 import studyData from "../data/studyData";
 import missionGenerator from "../utils/missionGenerator";
 import {getStageXP,getTopicCompletionXP,getDailyMissionXP,getStreakBonus} from "../utils/xpSystem";
@@ -134,7 +137,7 @@ return`${year}-${month}-${day}`;
 };
 
 const createDailyMissionPlan=(topics,date=getTodayKey())=>{
-let generated=[];
+let generated;
 
 try{
 const result=missionGenerator(topics);
@@ -214,7 +217,8 @@ stages
 
 const completedCount=topics.filter(topic=>topic.completed).length;
 const progress=topics.length?Math.round(completedCount/topics.length*100):0;
-const xp=Number(source.xp)||0;
+const legacyXP=readJSON("ssc-sentinel-xp",{});
+const xp=Math.max(0,Number(source.xp)||0,source.schemaVersion===2?0:Number(legacyXP.totalXP)||0);
 const today=getTodayKey();
 const storedPlan=source.dailyMissionPlan&&typeof source.dailyMissionPlan==="object"?source.dailyMissionPlan:null;
 const storedTopicIds=Array.isArray(storedPlan?.topicIds)?storedPlan.topicIds.map(String):[];
@@ -233,18 +237,21 @@ rewardClaimed:Boolean(storedPlan.rewardClaimed||source.missionRewardClaimed)
 return{
 ...defaults,
 ...source,
+schemaVersion:2,
 topics,
 xp,
+xpHistory:Array.isArray(source.xpHistory)?source.xpHistory:(legacyXP.history||[]),
 level:getLevel(xp),
 progress,
-revisions:Array.isArray(source.revisions)?source.revisions:[],
+revisions:readRevisions(),
+revisionSchema:1,
 completedTopics:Array.isArray(source.completedTopics)
 ?source.completedTopics
 :topics.filter(topic=>topic.completed).map(topic=>topic.id),
 activity:Array.isArray(source.activity)?source.activity:[],
 studyMinutes:isCurrentPlan?Number(source.studyMinutes)||0:0,
 totalStudyMinutes:Number(source.totalStudyMinutes)||0,
-brainTrainerCompleted:isCurrentPlan?Boolean(source.brainTrainerCompleted):false,
+brainTrainerCompleted:source.brainCompletedDate===today||(isCurrentPlan?Boolean(source.brainTrainerCompleted):false),
 missionRewardClaimed:Boolean(dailyMissionPlan.rewardClaimed),
 dailyMissionPlan,
 streak:Number(source.streak)||getCurrentStreak(),
@@ -283,18 +290,7 @@ item?.topic?.id??
 
 
 export function StudyProvider({children}){
-const [internalStudyState,setStudyState]=useState(()=>{
-try{
-const saved=JSON.parse(localStorage.getItem("studyState"));
-return migrateState(saved);
-}catch{
-return createDefaultState();
-}
-});
-
-useEffect(()=>{
-localStorage.setItem("studyState",JSON.stringify(internalStudyState));
-},[internalStudyState]);
+const [internalStudyState,setStudyState]=usePersistentState("studyState",migrateState);
 
 useEffect(()=>{
 const refreshDailyState=()=>{
@@ -316,7 +312,7 @@ dailyMissionPlan:createDailyMissionPlan(previous.topics,today)
 refreshDailyState();
 const interval=setInterval(refreshDailyState,60000);
 return()=>clearInterval(interval);
-},[]);
+},[setStudyState]);
 
 const dailyMission=useMemo(()=>{
 const topicIds=Array.isArray(internalStudyState.dailyMissionPlan?.topicIds)
@@ -401,10 +397,14 @@ missionCompleted:Boolean(internalStudyState.dailyMissionPlan?.completed)
 };
 },[internalStudyState,dueRevisions]);
 
-const completeStage=(topicId,requestedStage)=>{
+const completeStage=useCallback((topicId,requestedStage,result)=>{
 const stage=normalizeStage(requestedStage);
 
 if(!STAGES.includes(stage))return;
+const passMarks={conceptCheck:70,level1:70,level2:75,level3:80,topicTest:70};
+if(passMarks[stage]&&(!result?.passed||Number(result.percentage??result.accuracy)<passMarks[stage]||!Number.isFinite(Number(result.percentage??result.accuracy))))return;
+if(stage==="pyq"&&(!result?.completed||!(result.totalAttempts>0)))return;
+if(stage==="revision"&&(!result?.completed||result.overallProgress!==100))return;
 
 setStudyState(previous=>{
 const id=String(topicId);
@@ -414,7 +414,7 @@ if(!topic||!topic.unlocked||topic.stages?.[stage])return previous;
 
 const stageIndex=STAGES.indexOf(stage);
 
-if(stageIndex>0&&!topic.stages?.[STAGES[stageIndex-1]])return previous;
+if(!STAGES.slice(0,stageIndex).every(previousStage=>topic.stages?.[previousStage]))return previous;
 
 let stageReward=safeStageXP(stage);
 let topicCompleted=false;
@@ -443,10 +443,10 @@ let revisions=Array.isArray(previous.revisions)?previous.revisions:[];
 let completedTopics=Array.isArray(previous.completedTopics)?previous.completedTopics:[];
 
 if(topicCompleted&&completedTopic){
-progress:studyEngine.calculateTtopics=studyEngine.unlockNextTopic(
+topics=studyEngine.unlockNextTopic(
 topics,
 completedTopic
-);opicProgress(topic);
+);
 try{
 stageReward+=Number(getTopicCompletionXP())||0;
 }catch{
@@ -477,11 +477,7 @@ completedTopics=[...completedTopics,completedTopic.id];
 }
 }
 
-let streakResult={
-streak:Number(previous.streak)||0,
-best:Number(previous.bestStreak)||0,
-increased:false
-};
+let streakResult;
 
 try{
 streakResult=updateStreak();
@@ -550,9 +546,9 @@ topicCompleted
 )
 };
 });
-};
+},[setStudyState]);
 
-const addTopicNote=(topicId,text)=>{
+const addTopicNote=useCallback((topicId,text)=>{
 const value=String(text||"").trim();
 if(!value)return;
 
@@ -575,9 +571,9 @@ createdAt:new Date().toISOString()
 ),
 activity:addActivity(previous.activity,"note-added","A topic note was added")
 }));
-};
+},[setStudyState]);
 
-const addTopicMistake=(topicId,text)=>{
+const addTopicMistake=useCallback((topicId,text)=>{
 const value=String(text||"").trim();
 if(!value)return;
 
@@ -600,9 +596,9 @@ createdAt:new Date().toISOString()
 ),
 activity:addActivity(previous.activity,"mistake-added","A mistake was added to the notebook")
 }));
-};
+},[setStudyState]);
 
-const addStudyMinutes=minutes=>{
+const addStudyMinutes=useCallback(minutes=>{
 const value=Math.max(0,Number(minutes)||0);
 if(!value)return;
 
@@ -612,9 +608,9 @@ studyMinutes:(Number(previous.studyMinutes)||0)+value,
 totalStudyMinutes:(Number(previous.totalStudyMinutes)||0)+value,
 activity:addActivity(previous.activity,"study-session",`${value} study minutes completed`)
 }));
-};
+},[setStudyState]);
 
-const completeBrainTrainer=()=>{
+const completeBrainTrainer=useCallback(()=>{
 setStudyState(previous=>{
 if(previous.brainTrainerCompleted)return previous;
 
@@ -624,9 +620,9 @@ brainTrainerCompleted:true,
 activity:addActivity(previous.activity,"brain-trainer","Daily Brain Trainer completed")
 };
 });
-};
+},[setStudyState]);
 
-const completeRevisionById=revisionId=>{
+const completeRevisionById=useCallback(revisionId=>{
 setStudyState(previous=>{
 const id=String(revisionId);
 
@@ -668,11 +664,11 @@ nextRevision
 )
 };
 });
-};
+},[setStudyState]);
 
-const getRevisionDue=()=>dueRevisions;
+const getRevisionDue=useCallback(()=>dueRevisions,[dueRevisions]);
 
-const resetDailyProgress=()=>{
+const resetDailyProgress=useCallback(()=>{
 setStudyState(previous=>({
 ...previous,
 studyMinutes:0,
@@ -680,9 +676,9 @@ brainTrainerCompleted:false,
 missionRewardClaimed:false,
 dailyMissionPlan:createDailyMissionPlan(previous.topics)
 }));
-};
+},[setStudyState]);
 
-const resetSubjectProgress=subject=>{
+const resetSubjectProgress=useCallback(subject=>{
 setStudyState(previous=>{
 const freshTopics=createTopics();
 
@@ -711,21 +707,21 @@ previous.activity,
 )
 };
 });
-};
+},[setStudyState]);
 
-const resetAllProgress=()=>{
+const resetAllProgress=useCallback(()=>{
 localStorage.removeItem("studyState");
 localStorage.removeItem("studyStreak");
 localStorage.removeItem("bestStreak");
 localStorage.removeItem("lastStudyDate");
-setStudyState(createDefaultState());
-};
+setStudyState({...createDefaultState(),schemaVersion:2,revisionSchema:1,xpHistory:[],brainCompletedDate:null});
+},[setStudyState]);
 
 const contextValue=useMemo(()=>({
 studyState,
 dashboard,
 stages:STAGES,
-stageXP:STAGE_XP,
+stageXP:Object.fromEntries(STAGES.map(stage=>[stage,safeStageXP(stage)])),
 dailyMission,
 dueRevisions,
 getRevisionDue,
@@ -743,7 +739,18 @@ setStudyState
 studyState,
 dashboard,
 dailyMission,
-dueRevisions
+dueRevisions,
+getRevisionDue,
+completeStage,
+addTopicNote,
+addTopicMistake,
+addStudyMinutes,
+completeBrainTrainer,
+completeRevisionById,
+resetDailyProgress,
+resetSubjectProgress,
+resetAllProgress,
+setStudyState
 ]);
 
 return(
@@ -753,6 +760,7 @@ return(
 );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- This hook shares the provider's context; edits here require a full reload.
 export function useStudy(){
 const context=useContext(StudyContext);
 

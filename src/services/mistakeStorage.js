@@ -1,3 +1,4 @@
+import {writeJSON} from "./safeStorage";
 const STORAGE_KEY="ssc-sentinel-mistakes";
 
 export function readMistakes(){
@@ -27,10 +28,7 @@ return[];
 }
 
 export function writeMistakes(mistakes){
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(mistakes)
-);
+writeJSON(STORAGE_KEY,mistakes);
 }
 
 export function addMistake(mistake){

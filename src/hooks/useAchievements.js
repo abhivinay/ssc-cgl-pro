@@ -10,7 +10,7 @@ unlockAchievement
 
 export default function useAchievements(stats={}){
 
-const [unlockedIds,setUnlockedIds]=useState([]);
+const [unlockedIds,setUnlockedIds]=useState(()=>readAchievements());
 
 const achievementList=useMemo(
 ()=>getUnlockedAchievements(
@@ -20,9 +20,6 @@ unlockedIds
 [stats,unlockedIds]
 );
 
-useEffect(()=>{
-setUnlockedIds(readAchievements());
-},[]);
 
 useEffect(()=>{
 const newlyUnlocked=achievementList.filter(
@@ -45,9 +42,10 @@ updated.push(item.id);
 }
 });
 
+// eslint-disable-next-line react-hooks/set-state-in-effect -- Publish the IDs committed to achievement storage above.
 setUnlockedIds(updated);
 
-},[achievementList]);
+},[achievementList,unlockedIds]);
 
 return{
 achievements:achievementList,

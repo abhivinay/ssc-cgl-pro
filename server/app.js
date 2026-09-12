@@ -160,7 +160,7 @@ quotaType:null
 if(worker){
 try{
 await worker.terminate();
-}catch{}
+}catch{/* Worker cleanup must not replace the extraction error. */}
 }
 }
 });
@@ -301,7 +301,7 @@ let text=String(block||"")
 .trim();
 
 const answerMatch=text.match(
-/(?:answer|ans(?:wer)?|correct\s*(?:answer|option)?)\s*[:.\-]?\s*[\[(]?\s*([A-D1-4])\s*[\])]?\s*$/i
+/(?:answer|ans(?:wer)?|correct\s*(?:answer|option)?)\s*[:.-]?\s*[[(]?\s*([A-D1-4])\s*[\])]?\s*$/i
 );
 
 const correctOption=answerMatch
@@ -378,7 +378,7 @@ return String(value||"")
 function cleanOption(value){
 return String(value||"")
 .replace(/\s+/g," ")
-.replace(/(?:answer|ans(?:wer)?)\s*[:.\-].*$/i,"")
+.replace(/(?:answer|ans(?:wer)?)\s*[:.-].*$/i,"")
 .trim();
 }
 
@@ -453,7 +453,7 @@ const sample=pages
 const yearMatch=sample.match(/\b(20\d{2}|19\d{2})\b/);
 const shiftMatch=sample.match(/\bshift\s*[-:]?\s*(I{1,3}|[1-3])\b/i);
 const dateMatch=sample.match(
-/\b([0-3]?\d[\/.-][01]?\d[\/.-](?:20)?\d{2,4})\b/
+/\b([0-3]?\d[/.-][01]?\d[/.-](?:20)?\d{2,4})\b/
 );
 
 return{

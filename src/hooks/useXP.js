@@ -1,4 +1,5 @@
 import {useCallback,useEffect,useMemo,useState} from "react";
+import {subscribeStorage} from "../services/safeStorage";
 import {
 addXP,
 clearXP,
@@ -38,11 +39,13 @@ setXPState(clearXP());
 
 useEffect(()=>{
 const sync=()=>refresh();
+const unsubscribe=subscribeStorage(sync);
 
 window.addEventListener("focus",sync);
 document.addEventListener("visibilitychange",sync);
 
 return()=>{
+unsubscribe();
 window.removeEventListener("focus",sync);
 document.removeEventListener("visibilitychange",sync);
 };

@@ -1,295 +1,261 @@
-import{useMemo}from"react";
-import{useNavigate}from"react-router-dom";
-import{useStudy}from"../context/StudyContext";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useStudy } from "../context/StudyContext";
 
-const SUBJECT_NAMES={
-quant:"Quant",
-reasoning:"Reasoning",
-english:"English",
-gk:"General Awareness"
+const SUBJECT_NAMES = {
+  quant: "Quant",
+  reasoning: "Reasoning",
+  english: "English",
+  gk: "General Awareness",
 };
 
-export default function Planner(){
-const navigate=useNavigate();
-const{studyState,dueRevisions}=useStudy();
+const EMPTY_LIST = [];
 
-const topics=Array.isArray(studyState.topics)
-?studyState.topics
-:[];
+export default function Planner() {
+  const navigate = useNavigate();
+  const { studyState, dueRevisions } = useStudy();
 
-const revisions=Array.isArray(studyState.revisions)
-?studyState.revisions
-:[];
+  const topics = Array.isArray(studyState.topics)
+    ? studyState.topics
+    : EMPTY_LIST;
 
-const planner=useMemo(()=>{
-const incompleteTopics=topics.filter(
-topic=>!topic.completed
-);
+  const revisions = Array.isArray(studyState.revisions)
+    ? studyState.revisions
+    : EMPTY_LIST;
 
-const unlockedTopics=incompleteTopics.filter(
-topic=>topic.unlocked
-);
+  const planner = useMemo(() => {
+    const incompleteTopics = topics.filter((topic) => !topic.completed);
 
-const candidates=unlockedTopics.length
-?unlockedTopics
-:incompleteTopics;
+    const unlockedTopics = incompleteTopics.filter((topic) => topic.unlocked);
 
-const sortedCandidates=[...candidates].sort((a,b)=>{
-const priorityDifference=
-(Number(a.priority)||999)-
-(Number(b.priority)||999);
+    const candidates = unlockedTopics.length
+      ? unlockedTopics
+      : incompleteTopics;
 
-if(priorityDifference!==0){
-return priorityDifference;
-}
+    const sortedCandidates = [...candidates].sort((a, b) => {
+      const priorityDifference =
+        (Number(a.priority) || 999) - (Number(b.priority) || 999);
 
-const progressDifference=
-(Number(a.progress)||0)-
-(Number(b.progress)||0);
+      if (priorityDifference !== 0) {
+        return priorityDifference;
+      }
 
-if(progressDifference!==0){
-return progressDifference;
-}
+      const progressDifference =
+        (Number(a.progress) || 0) - (Number(b.progress) || 0);
 
-return(
-(Number(b.weightage)||0)-
-(Number(a.weightage)||0)
-);
-});
+      if (progressDifference !== 0) {
+        return progressDifference;
+      }
 
-const topic=sortedCandidates[0]||null;
+      return (Number(b.weightage) || 0) - (Number(a.weightage) || 0);
+    });
 
-const revisionCount=Array.isArray(dueRevisions)
-?dueRevisions.length
-:revisions.filter(revision=>!revision.completed).length;
+    const topic = sortedCandidates[0] || null;
 
-let priority="Medium";
-let reason="Continue your current learning sequence.";
+    const revisionCount = Array.isArray(dueRevisions)
+      ? dueRevisions.length
+      : revisions.filter((revision) => !revision.completed).length;
 
-if(revisionCount>=3){
-priority="High";
-reason="Multiple revisions are due and should be completed first.";
-}else if(Number(topic?.difficulty)>=3){
-priority="High";
-reason="Your current focus topic has high difficulty.";
-}else if(Number(topic?.weightage)>=3){
-priority="High";
-reason="This topic has strong SSC examination weightage.";
-}else if(!topic){
-priority="Completed";
-reason="No incomplete topic is currently available.";
-}
+    let priority = "Medium";
+    let reason = "Continue your current learning sequence.";
 
-return{
-topic,
-revisionCount,
-priority,
-reason
-};
-},[topics,revisions,dueRevisions]);
+    if (revisionCount >= 3) {
+      priority = "High";
+      reason = "Multiple revisions are due and should be completed first.";
+    } else if (Number(topic?.difficulty) >= 3) {
+      priority = "High";
+      reason = "Your current focus topic has high difficulty.";
+    } else if (Number(topic?.weightage) >= 3) {
+      priority = "High";
+      reason = "This topic has strong SSC examination weightage.";
+    } else if (!topic) {
+      priority = "Completed";
+      reason = "No incomplete topic is currently available.";
+    }
 
-const topicName=
-planner.topic?.name||
-planner.topic?.topic||
-"All Topics Completed";
+    return {
+      topic,
+      revisionCount,
+      priority,
+      reason,
+    };
+  }, [topics, revisions, dueRevisions]);
 
-const subjectName=planner.topic
-?SUBJECT_NAMES[planner.topic.subject]||planner.topic.subject
-:"-";
+  const topicName =
+    planner.topic?.name || planner.topic?.topic || "All Topics Completed";
 
-const openTopic=()=>{
-if(!planner.topic)return;
+  const subjectName = planner.topic
+    ? SUBJECT_NAMES[planner.topic.subject] || planner.topic.subject
+    : "-";
 
-const nextStageOrder=[
-"learn",
-"conceptCheck",
-"level-1",
-"level-2",
-"level-3",
-"topic-test",
-"pyq",
-"revision"
-];
+  const openTopic = () => {
+    if (!planner.topic) return;
 
-const completedStages=planner.topic.stages||{};
+    const nextStageOrder = [
+      "learn",
+      "conceptCheck",
+      "level-1",
+      "level-2",
+      "level-3",
+      "topic-test",
+      "pyq",
+      "revision",
+    ];
 
-const aliases={
-"level-1":"level1",
-"level-2":"level2",
-"level-3":"level3",
-"topic-test":"topicTest"
-};
+    const completedStages = planner.topic.stages || {};
 
-const nextStage=nextStageOrder.find(stage=>{
-const storedStage=aliases[stage]||stage;
-return !completedStages[storedStage];
-})||"learn";
+    const aliases = {
+      "level-1": "level1",
+      "level-2": "level2",
+      "level-3": "level3",
+      "topic-test": "topicTest",
+    };
 
-navigate(
-`/topic/${planner.topic.id}/${nextStage}`
-);
-};
+    const nextStage =
+      nextStageOrder.find((stage) => {
+        const storedStage = aliases[stage] || stage;
+        return !completedStages[storedStage];
+      }) || "learn";
 
-return(
-<div className="mx-auto max-w-7xl pb-10">
-<div>
-<p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-400">
-Smart Study Plan
-</p>
+    navigate(`/topic/${planner.topic.id}/${nextStage}`);
+  };
 
-<h1 className="mt-2 text-4xl font-bold">
-AI Daily Planner
-</h1>
+  return (
+    <div className="mx-auto max-w-7xl pb-10">
+      <div>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-200">
+          Smart Study Plan
+        </p>
 
-<p className="mt-2 text-zinc-400">
-Your next learning task based on progress, priority and revisions.
-</p>
-</div>
+        <h1 className="mt-2 text-3xl font-bold">AI Daily Planner</h1>
 
-<div className="mt-8 grid gap-6 xl:grid-cols-3">
-<div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-<p className="text-sm text-zinc-500">
-Current Focus
-</p>
+        <p className="mt-2 text-zinc-400">
+          Your next learning task based on progress, priority and revisions.
+        </p>
+      </div>
 
-<h2 className="mt-3 text-2xl font-bold">
-{topicName}
-</h2>
+      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+          <p className="text-sm text-zinc-500">Current Focus</p>
 
-<div className="mt-5 space-y-2 text-sm text-zinc-400">
-<p>
-Subject:{" "}
-<span className="text-white">
-{subjectName}
-</span>
-</p>
+          <h2 className="mt-3 text-2xl font-bold">{topicName}</h2>
 
-<p>
-Progress:{" "}
-<span className="text-white">
-{planner.topic?.progress||0}%
-</span>
-</p>
+          <div className="mt-5 space-y-2 text-sm text-zinc-400">
+            <p>
+              Subject: <span className="text-white">{subjectName}</span>
+            </p>
 
-<p>
-Estimated time:{" "}
-<span className="text-white">
-{planner.topic
-?`${planner.topic.estimatedHours||2} hours`
-:"-"}
-</span>
-</p>
+            <p>
+              Progress:{" "}
+              <span className="text-white">
+                {planner.topic?.progress || 0}%
+              </span>
+            </p>
 
-<p>
-Difficulty:{" "}
-<span className="text-white">
-{planner.topic?.difficulty||"-"}
-</span>
-</p>
-</div>
+            <p>
+              Estimated time:{" "}
+              <span className="text-white">
+                {planner.topic
+                  ? `${planner.topic.estimatedHours || 2} hours`
+                  : "-"}
+              </span>
+            </p>
 
-<button
-type="button"
-disabled={!planner.topic}
-onClick={openTopic}
-className="mt-6 rounded-2xl bg-violet-600 px-5 py-3 font-semibold transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
->
-Continue Topic
-</button>
-</div>
+            <p>
+              Difficulty:{" "}
+              <span className="text-white">
+                {planner.topic?.difficulty || "-"}
+              </span>
+            </p>
+          </div>
 
-<div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-<p className="text-sm text-zinc-500">
-Today's Priority
-</p>
+          <button
+            type="button"
+            disabled={!planner.topic}
+            onClick={openTopic}
+            className="primary-btn mt-6 disabled:cursor-not-allowed"
+          >
+            Continue Topic
+          </button>
+        </div>
 
-<h2 className={`mt-3 text-3xl font-bold ${
-planner.priority==="High"
-?"text-red-400"
-:planner.priority==="Completed"
-?"text-emerald-400"
-:"text-amber-400"
-}`}>
-{planner.priority}
-</h2>
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+          <p className="text-sm text-zinc-500">Today's Priority</p>
 
-<p className="mt-4 text-sm leading-6 text-zinc-400">
-{planner.reason}
-</p>
+          <h2
+            className={`mt-3 text-3xl font-bold ${
+              planner.priority === "High"
+                ? "text-cyan-200"
+                : planner.priority === "Completed"
+                  ? "text-cyan-200"
+                  : "text-cyan-200"
+            }`}
+          >
+            {planner.priority}
+          </h2>
 
-<div className="mt-6 rounded-2xl bg-zinc-950 p-4">
-<p className="text-sm text-zinc-500">
-Revision Due
-</p>
+          <p className="mt-4 text-sm leading-6 text-zinc-400">
+            {planner.reason}
+          </p>
 
-<p className="mt-1 text-3xl font-bold">
-{planner.revisionCount}
-</p>
-</div>
-</div>
+          <div className="mt-6 rounded-lg bg-zinc-950 p-4">
+            <p className="text-sm text-zinc-500">Revision Due</p>
 
-<div className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-<p className="text-sm text-zinc-500">
-Recommended Test
-</p>
+            <p className="mt-1 text-3xl font-bold">{planner.revisionCount}</p>
+          </div>
+        </div>
 
-<h2 className="mt-3 text-2xl font-bold">
-{planner.topic
-?`${topicName} Drill Test`
-:"Full SSC CGL Mock"}
-</h2>
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+          <p className="text-sm text-zinc-500">Recommended Test</p>
 
-<p className="mt-4 text-sm leading-6 text-zinc-400">
-Complete the current learning stages first, then attempt a topic test and PYQs.
-</p>
+          <h2 className="mt-3 text-2xl font-bold">
+            {planner.topic ? `${topicName} Drill Test` : "Full SSC CGL Mock"}
+          </h2>
 
-<button
-type="button"
-onClick={()=>navigate("/mock-tests")}
-className="mt-6 rounded-2xl border border-zinc-700 bg-zinc-950 px-5 py-3 font-semibold transition hover:border-zinc-500"
->
-Open Mock Tests
-</button>
-</div>
-</div>
+          <p className="mt-4 text-sm leading-6 text-zinc-400">
+            Complete the current learning stages first, then attempt a topic
+            test and PYQs.
+          </p>
 
-<div className="mt-6 rounded-3xl border border-zinc-800 bg-zinc-900 p-6">
-<h2 className="text-xl font-bold">
-Today's Schedule
-</h2>
+          <button
+            type="button"
+            onClick={() => navigate("/mock-tests")}
+            className="mt-6 rounded-lg border border-zinc-700 bg-zinc-950 px-5 py-3 font-semibold transition hover:border-zinc-500"
+          >
+            Open Mock Tests
+          </button>
+        </div>
+      </div>
 
-<div className="mt-5 grid gap-4 md:grid-cols-3">
-<div className="rounded-2xl bg-zinc-950 p-5">
-<h3 className="font-bold">
-🌅 Morning
-</h3>
+      <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+        <h2 className="text-xl font-bold">Today's Schedule</h2>
 
-<p className="mt-2 text-sm text-zinc-400">
-Learn concepts and revise formulas.
-</p>
-</div>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          <div className="rounded-lg bg-zinc-950 p-5">
+            <h3 className="font-bold">Morning</h3>
 
-<div className="rounded-2xl bg-zinc-950 p-5">
-<h3 className="font-bold">
-☀️ Afternoon
-</h3>
+            <p className="mt-2 text-sm text-zinc-400">
+              Learn concepts and revise formulas.
+            </p>
+          </div>
 
-<p className="mt-2 text-sm text-zinc-400">
-Complete practice levels and PYQs.
-</p>
-</div>
+          <div className="rounded-lg bg-zinc-950 p-5">
+            <h3 className="font-bold">Afternoon</h3>
 
-<div className="rounded-2xl bg-zinc-950 p-5">
-<h3 className="font-bold">
-🌙 Evening
-</h3>
+            <p className="mt-2 text-sm text-zinc-400">
+              Complete practice levels and PYQs.
+            </p>
+          </div>
 
-<p className="mt-2 text-sm text-zinc-400">
-Attempt tests and analyse mistakes.
-</p>
-</div>
-</div>
-</div>
-</div>
-);
+          <div className="rounded-lg bg-zinc-950 p-5">
+            <h3 className="font-bold">Evening</h3>
+
+            <p className="mt-2 text-sm text-zinc-400">
+              Attempt tests and analyse mistakes.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

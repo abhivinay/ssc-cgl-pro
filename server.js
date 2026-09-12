@@ -1,11 +1,14 @@
 import express from"express";
 import cors from"cors";
 import dotenv from"dotenv";
+import {resolve} from "node:path";
+import {fileURLToPath} from "node:url";
+import {installProgressRoutes} from "./server/progressStore.js";
 import{GoogleGenAI}from"@google/genai";
 dotenv.config();
 const app=express();
-const PORT=5000;
-const MODEL="gemini-3.6-flash";
+const PORT=Number(process.env.PORT)||5000;
+const MODEL=process.env.GEMINI_MODEL||"";
 const TOPICS={
 "Reasoning":[
 "Analogy","Classification","Coding-Decoding","Blood Relation","Direction & Distance","Ranking","Alphabet Series","Number Series","Missing Number","Mathematical Operations","Syllogism","Statement & Conclusion","Statement & Assumption","Seating Arrangement","Venn Diagram","Calendar","Clock","Dice","Cube","Mirror Image","Water Image","Paper Folding","Paper Cutting","Embedded Figure","Figure Completion","Counting Figures","Non-Verbal Reasoning"
@@ -20,15 +23,31 @@ const TOPICS={
 "History","Geography","Polity","Economy","Biology","Physics","Chemistry","Environment","Computer","Current Affairs","Art & Culture","Sports","Books & Authors","Awards & Honours","Important Days","Government Schemes","Science & Technology","Static GK"
 ]
 };
-app.use(cors());
-app.use(express.json({limit:"75mb"}));
-if(!process.env.GEMINI_API_KEY){
-console.error("Missing GEMINI_API_KEY in .env");
-process.exit(1);
-}
-const ai=new GoogleGenAI({
-apiKey:process.env.GEMINI_API_KEY
+const allowedOrigins=new Set(["http://localhost:5173","http://localhost:5174","http://localhost:4173","http://127.0.0.1:5173","http://127.0.0.1:5174"]);
+app.use((req,res,next)=>{
+if(!/^(localhost|127\.0\.0\.1)(:\d+)?$/.test(req.headers.host||""))return res.status(403).json({error:"Local access only"});
+if(req.headers.origin&&!allowedOrigins.has(req.headers.origin))return res.status(403).json({error:"Origin not allowed"});
+next();
 });
+app.use(cors({origin:(origin,callback)=>callback(null,!origin||allowedOrigins.has(origin))}));
+app.use(express.json({limit:"75mb"}));
+let extractionActive=0;
+let extractionRequests=0;
+let extractionWindow=Date.now();
+app.use(["/api/extract-question","/api/extract-pdf"],(req,res,next)=>{
+if(Date.now()-extractionWindow>60000){extractionWindow=Date.now();extractionRequests=0;}
+if(extractionActive>=2||extractionRequests>=10)return res.status(429).set("Retry-After","60").json({error:"Extraction busy. Try again in one minute.",retryable:true,retryAfter:60});
+extractionActive++;extractionRequests++;
+let released=false;
+const release=()=>{if(!released){released=true;extractionActive--;}};
+res.once("finish",release);res.once("close",release);
+next();
+});
+installProgressRoutes(app,resolve(process.env.SSC_DATA_DIR||".ssc-data"));
+app.get("/api/health",(req,res)=>res.json({ok:true,extractionConfigured:Boolean(process.env.GEMINI_API_KEY&&MODEL)}));
+const ai=process.env.GEMINI_API_KEY&&MODEL?new GoogleGenAI({
+apiKey:process.env.GEMINI_API_KEY
+}):null;
 app.get("/",(req,res)=>{
 res.send("Gemini Server Running");
 });
@@ -144,7 +163,7 @@ return res.status(parsed.status).json(parsed.body);
 function normalizeDate(value){
 const text=String(value||"").trim();
 if(!text)return"";
-const match=text.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{4})/);
+const match=text.match(/(\d{1,2})[/\-. ](\d{1,2})[/\-. ](\d{4})/);
 if(!match)return text;
 const day=match[1].padStart(2,"0");
 const month=match[2].padStart(2,"0");
@@ -256,6 +275,7 @@ missingAnswers:questions.filter(question=>question.flags.missingAnswer).length
 };
 }
 app.post("/api/extract-question",async(req,res)=>{
+if(!ai)return res.status(503).json({error:"Configure GEMINI_API_KEY and GEMINI_MODEL on the server to extract questions.",retryable:false});
 try{
 const{imageBase64,mimeType}=req.body;
 if(!imageBase64){
@@ -339,6 +359,7 @@ return sendParsedError(res,error);
 }
 });
 app.post("/api/extract-pdf",async(req,res)=>{
+if(!ai)return res.status(503).json({error:"Configure GEMINI_API_KEY and GEMINI_MODEL on the server to extract PDFs.",retryable:false});
 try{
 const{
 pdfBase64,
@@ -458,7 +479,7 @@ data:pdfBase64
 let extracted;
 try{
 extracted=extractJson(response.text);
-}catch(error){
+}catch{
 console.error("Invalid Gemini PDF JSON:",cleanModelText(response.text).slice(0,1000));
 return res.status(422).json({
 error:"Gemini returned invalid PDF JSON. Retry this paper.",
@@ -493,7 +514,10 @@ return sendParsedError(res,error);
 }
 });
 app.use((error,req,res,next)=>{
+// Express identifies error middleware by its four-argument signature.
+void next;
 console.error("Server error:",error);
+if(error?.type==="entity.parse.failed")return res.status(400).json({error:"Invalid JSON request",retryable:false});
 if(error?.type==="entity.too.large"){
 return res.status(413).json({
 error:"Uploaded payload is too large.",
@@ -509,6 +533,7 @@ retryable:true,
 retryAfter:null
 });
 });
-app.listen(PORT,()=>{
+export default app;
+if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))app.listen(PORT,"127.0.0.1",()=>{
 console.log(`Server running on http://localhost:${PORT}`);
 });

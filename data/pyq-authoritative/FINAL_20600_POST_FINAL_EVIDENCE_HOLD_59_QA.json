@@ -1,0 +1,75 @@
+{
+  "stage": "FINAL_20600_POST_FINAL_EVIDENCE_HOLD_59_QA",
+  "validatedAt": "2026-08-26T07:02:52.436005Z",
+  "hardStructuralValidationPassed": true,
+  "sourceVerificationCompletionPassed": false,
+  "masterCounts": {
+    "papersExpected": 206,
+    "papersActual": 206,
+    "questionsExpected": 20600,
+    "questionsActual": 20600,
+    "optionsExpected": 82400,
+    "optionsActual": 82400,
+    "answerMappingsExpected": 20600,
+    "answerMappingsValidated": 20600
+  },
+  "finalEvidenceHold59": {
+    "scope": 59,
+    "patchApplied": 54,
+    "genuineHold": 5,
+    "patchHoldOverlap": 0,
+    "missingKeys": 0,
+    "extraKeys": 0,
+    "graphicalPatchRecords": 26,
+    "textualPatchRecords": 28,
+    "productionSafeGraphicalAssets": 130,
+    "evidenceAssets": 54
+  },
+  "finalHoldState": {
+    "previousHold": 302,
+    "resolved": 54,
+    "explicitHold": 248,
+    "nonHoldRecordCount": 20352,
+    "holdClassBreakdown": {
+      "LEGACY_PERMANENT_HOLD": 132,
+      "CONTROLLER_LANGUAGE_QA_HOLD": 4,
+      "VISUAL_RECON_909_HOLD": 1,
+      "FINAL_VISUAL_ASSET_278_HOLD": 111
+    }
+  },
+  "integrity": {
+    "duplicatePaperIds": 0,
+    "duplicateQuestionIds": 0,
+    "papersNotExactly100Questions": 0,
+    "optionCountViolations": 0,
+    "emptyOptionRecords": 0,
+    "answerMappingMismatches": 0,
+    "identityFailures": 0,
+    "subjectSplitFailures": 0,
+    "coreChangesOutsideAcceptedPatch": 0,
+    "sourceProvenanceOverwrites": 0,
+    "finalHoldStatusFailures": 0,
+    "patchStatusFailures": 0
+  },
+  "verificationState": {
+    "verifiedTrueTotal": 1842,
+    "verifiedFalseTotal": 18758,
+    "nonHoldRecords": 20352,
+    "nonHoldVerifiedTrue": 1842,
+    "nonHoldVerifiedFalse": 18510,
+    "reviewStatusCounts": {
+      "pending": 18409,
+      "reviewed": 60,
+      "hold": 248,
+      "recovered": 41,
+      "approved": 1842
+    },
+    "importantQualification": "The explicit HOLD-reduction work is complete for FINAL_EVIDENCE_HOLD_59, but the current master still contains non-HOLD records whose verified flag is false. Therefore 20,352 is a HOLD-excluded count, not a claim that all 20,352 are source-verified."
+  },
+  "productionReadiness": {
+    "structuralMasterReady": true,
+    "allNonHoldRecordsSourceVerified": false,
+    "authoritativeCompletionClaimed": false,
+    "status": "STRUCTURALLY_VALID_POST_FINAL_EVIDENCE_HOLD_59_BUT_SOURCE_VERIFICATION_NOT_COMPLETE"
+  }
+}

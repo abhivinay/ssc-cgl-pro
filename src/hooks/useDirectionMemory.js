@@ -36,10 +36,10 @@ createNextDirectionRound(previous)
 
 },[]);
 
-const finishGame=useCallback(()=>{
+const finishGame=useCallback((latestState=state)=>{
 
 const completed=
-completeDirectionGame(state);
+completeDirectionGame(latestState);
 
 const summary=
 getDirectionSummary(completed);

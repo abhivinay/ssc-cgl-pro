@@ -1,3 +1,4 @@
+import {writeJSON} from "./safeStorage";
 const REVIEW_KEY="ssc-content-review-data";
 const EXTRACTION_KEYS=["ssc-content-extraction-output","ssc-gemini-extraction-output","ssc-pdf-json-extraction","ssc-pyq-review-data"];
 
@@ -6,6 +7,7 @@ try{return JSON.parse(localStorage.getItem(key)||"null");}catch{return null;}
 }
 
 function text(value){
+if(value&&typeof value==="object")return [value.paper,value.fileName,value.page?`page ${value.page}`:null,value.questionNumber?`Q${value.questionNumber}`:null].filter(Boolean).join(" · ");
 return String(value??"").trim();
 }
 
@@ -50,8 +52,10 @@ subject:text(question?.subject)||"Unassigned",
 topic:text(question?.topic)||"Unassigned",
 confidence:Math.max(
 0,
-Math.min(100,Number(question?.confidence??0)||0)
+Math.min(100,(Number(question?.confidence??0)||0)*(question?.confidenceScale!=="percent"&&Number(question?.confidence)>0&&Number(question?.confidence)<=1?100:1))
 ),
+confidenceScale:"percent",
+sourceDetails:question?.sourceDetails||(typeof question?.source==="object"?question.source:null),
 source:text(
 question?.source??
 question?.fileName??
@@ -90,7 +94,7 @@ return[];
 }
 
 export function saveReviewQuestions(questions){
-localStorage.setItem(REVIEW_KEY,JSON.stringify(questions));
+writeJSON(REVIEW_KEY,questions);
 
 window.dispatchEvent(
 new CustomEvent("ssc-review-data-updated",{
@@ -100,3 +104,6 @@ detail:{count:questions.length}
 }
 
 export const REVIEW_STORAGE_KEY=REVIEW_KEY;
+export function canApproveQuestion(question){
+return Boolean(question?.questionText?.trim()&&question.options?.length===4&&question.options.every(option=>typeof option==="string"&&option.trim())&&["A","B","C","D"].includes(question.correctAnswer)&&question.subject&&question.subject!=="Unassigned"&&question.topic&&question.topic!=="Unassigned");
+}

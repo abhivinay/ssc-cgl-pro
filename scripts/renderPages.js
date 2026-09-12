@@ -17,6 +17,7 @@ const SCALE=5;
 
 const safeName=name=>name
 .replace(/\.pdf$/i,"")
+// eslint-disable-next-line no-control-regex -- Strip control characters forbidden in Windows filenames.
 .replace(/[<>:"/\\|?*\x00-\x1F]/g,"_")
 .replace(/\s+/g,"_");
 

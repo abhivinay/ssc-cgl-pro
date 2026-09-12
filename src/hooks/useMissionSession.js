@@ -1,4 +1,4 @@
-import{useCallback,useEffect,useRef,useState}from"react";
+import{useCallback,useEffect,useEffectEvent,useRef,useState}from"react";
 import{useStudy}from"../context/StudyContext";
 import createController from"../engine/mission/missionController";
 
@@ -7,11 +7,18 @@ const{studyState,completeStage}=useStudy();
 const controllerRef=useRef(null);
 const[session,setSession]=useState(null);
 const[timer,setTimer]=useState(null);
+const[available,setAvailable]=useState(false);
+
+// Read current progress when the mission identity changes, without resetting
+// an active timer for unrelated notes, XP or activity updates.
+const createCurrentController=useEffectEvent(()=>createController({studyState,completeStage,preset}));
 
 useEffect(()=>{
-const controller=createController({studyState,completeStage,preset});
+const controller=createCurrentController();
 controllerRef.current=controller;
+// eslint-disable-next-line react-hooks/set-state-in-effect -- Publish the newly created external controller snapshot.
 setSession(controller?.getSession()||null);
+setAvailable(Boolean(controller));
 setTimer(controller?.getTimer()||null);
 return()=>{
 controllerRef.current=null;
@@ -51,6 +58,6 @@ pause,
 resume,
 stop,
 complete,
-available:Boolean(controllerRef.current)
+available
 };
 }

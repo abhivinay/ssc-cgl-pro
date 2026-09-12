@@ -36,12 +36,12 @@ return SECTION_NAMES.find(section=>normalized.includes(section.toLowerCase()))||
 };
 
 const detectExamDate=text=>{
-const match=text.match(/Exam Date\s*[:\-]?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
+const match=text.match(/Exam Date\s*[:-]?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
 return match?.[1]||null;
 };
 
 const detectExamTime=text=>{
-const match=text.match(/Exam Time\s*[:\-]?\s*([0-9:]+\s*[AP]M\s*-\s*[0-9:]+\s*[AP]M)/i);
+const match=text.match(/Exam Time\s*[:-]?\s*([0-9:]+\s*[AP]M\s*-\s*[0-9:]+\s*[AP]M)/i);
 return match?.[1]||null;
 };
 

@@ -11,7 +11,8 @@ import topicTest from "./topicTest";
 import revision from "./revision";
 import flashcards from "./flashcards";
 import commonMistakes from "./commonMistakes";
-import mastery from "./mastery";
+// This source file is empty; do not fabricate mastery content.
+const mastery = null;
 
 const numberSystem = {
   id: "number-system",

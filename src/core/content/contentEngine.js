@@ -1,7 +1,5 @@
 import topics,{
 getAllTopics,
-getTopicById,
-getTopicBySlug,
 getTopicsBySubject
 }from"../../data/content/topics";
 
